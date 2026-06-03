@@ -1,0 +1,2191 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard CX · 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&amp;family=DM+Serif+Display&amp;display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+<style>
+:root{--bg:#f4f1ec;--surface:#fff;--s2:#faf8f4;--border:#e2ddd6;--text:#1a1714;--t2:#6b6460;--muted:#9e9894;--green:#2d5a3d;--gbg:#e8f0ea;--red:#c0392b;--rbg:#fdecea;--amber:#b86c1a;--ambg:#fdf3e6;--yc:#fef9ec;--yb:#f0d98a;--r:8px;--shadow:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.04);--shadow-hover:0 4px 20px rgba(0,0,0,.10)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:13px}
+.hdr{background:#1a1714;border-bottom:none;padding:0 32px;height:58px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300;box-shadow:0 2px 12px rgba(0,0,0,.18)}
+.hbrand{display:flex;align-items:center;gap:12px}
+.htitle{font-family:'DM Serif Display',serif;font-size:17px;color:#faf8f4}.htitle span{color:#7ab893}
+.hsub{font-size:10px;color:#9e9894;letter-spacing:.03em}
+.ytag{background:#2d5a3d;color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:4px}
+.tabs{background:var(--surface);border-bottom:1px solid var(--border);padding:0 28px;display:flex}
+.tab{padding:12px 16px;font-size:10.5px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:6px;transition:.15s;letter-spacing:.06em;text-transform:uppercase}
+.tab:hover{color:var(--text)}.tab.active{color:var(--green);border-bottom-color:var(--green)}
+.av{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:#fff}
+.page{padding:22px 28px;max-width:1500px;margin:0 auto}
+.panel{display:none}.panel.active{display:block}
+.sec{font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px}
+.sec span:not(.sec-tag){color:var(--text)}.sec-tag{font-size:9px;font-weight:700;background:var(--green);color:#fff;padding:2px 7px;border-radius:3px}
+.kpi-row{display:grid;gap:1px;background:var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px;border:1px solid var(--border)}
+.kpi-6{grid-template-columns:repeat(6,1fr)}.kpi-4{grid-template-columns:repeat(4,1fr)}.kpi-3{grid-template-columns:repeat(3,1fr)}.kpi-7{grid-template-columns:repeat(7,1fr)}.kpi-8{grid-template-columns:repeat(8,1fr)}.kpi-9{grid-template-columns:repeat(9,1fr)}
+.kpi-card{background:var(--surface);padding:16px 16px 13px;position:relative;transition:box-shadow .2s}
+.kpi-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--border)}
+.kpi-card.ok::after{background:var(--green)}.kpi-card.bad::after{background:var(--red)}.kpi-card.warn::after{background:var(--amber)}
+.kpi-label{font-size:7.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;min-height:1.1em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi-val{font-family:'DM Serif Display',serif;font-size:26px;line-height:1;margin-bottom:4px;display:inline-block}
+.kpi-val.ok{color:var(--green)}.kpi-val.bad{color:var(--red)}.kpi-val.warn{color:var(--amber)}.kpi-val.none{color:var(--t2)}
+.kpi-sub{font-size:10px;color:var(--muted);display:flex;align-items:center;gap:5px;flex-wrap:wrap;margin-top:2px}
+.kbadge{font-size:9px;font-weight:700;padding:2px 6px;border-radius:3px}
+.kbadge.ok{background:var(--gbg);color:var(--green)}.kbadge.bad{background:var(--rbg);color:var(--red)}.kbadge.warn{background:var(--ambg);color:var(--amber)}
+.chart-box{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:16px;box-shadow:var(--shadow)}
+/* Gerencial-style panels */
+.panel-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:20px 22px;box-shadow:var(--shadow);margin-bottom:16px}
+.panel-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px}
+.panel-title{font-family:'DM Serif Display',serif;font-size:1rem;color:var(--text)}
+.chart-legend{display:flex;gap:14px;font-size:0.72rem;color:var(--t2)}
+.chart-legend-dot{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:middle}
+/* Combo chart */
+.combo-svg-wrap{position:relative;width:100%;min-height:380px;overflow-x:auto}
+/* Backlog chart */
+.backlog-svg-wrap{overflow-x:auto}
+.bk-legend{display:flex;gap:16px;margin-bottom:14px;flex-wrap:wrap}
+.bk-legend-item{display:flex;align-items:center;gap:5px;font-size:.72rem;color:var(--t2)}
+.bk-legend-dot{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+/* Table toggles */
+.chart-table-toggle{display:none!important;align-items:center;gap:6px;background:none;border:1px solid var(--border);color:var(--t2);font-size:.72rem;font-family:'DM Sans',sans-serif;padding:6px 13px;border-radius:4px;cursor:pointer;margin-top:14px;transition:all .2s}
+.chart-table-toggle:hover{border-color:var(--green);color:var(--green)}
+.chart-table-wrap{display:none!important;margin-top:14px;overflow-x:auto;border:1px solid var(--border);border-radius:6px}
+.chart-table-wrap.open{display:block}
+.chart-tbl{width:100%;border-collapse:collapse;font-size:.78rem;min-width:400px}
+.chart-tbl thead tr{background:#f7f4ef}
+.chart-tbl th{padding:8px 11px;text-align:center;font-weight:600;font-size:.67rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap}
+.chart-tbl th:first-child{text-align:left}
+.chart-tbl td{padding:6px 11px;text-align:center;border-bottom:1px solid #f0ece6;color:var(--t2)}
+.chart-tbl td:first-child{text-align:left;font-weight:600;color:var(--text)}
+.chart-tbl tbody tr:hover{background:#faf8f4}
+.chart-tbl tbody tr:last-child td{border-bottom:none}
+.cht-cell{display:inline-block;min-width:28px;padding:2px 5px;border-radius:3px;outline:none;cursor:text;transition:background .15s}
+.cht-cell:hover{background:rgba(122,184,147,.12)}
+.cht-cell:focus{background:var(--gbg);box-shadow:0 0 0 1.5px var(--green)}
+.cht-add-row{width:100%;background:none;border:none;border-top:1px dashed var(--border);color:var(--muted);font-size:.72rem;font-family:'DM Sans',sans-serif;padding:9px;cursor:pointer;transition:all .2s;text-align:center}
+.cht-add-row:hover{background:#fafaf8;color:var(--green)}
+.cht-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.8rem;padding:2px 4px;border-radius:3px;transition:all .15s}
+.cht-del:hover{color:var(--red);background:#fef0ef}
+.cblabel{font-size:9px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--t2);margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.cblabel .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}.cbsub{font-size:10px;color:var(--muted);margin-bottom:10px}
+.tbl-wrap{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse}
+thead th{padding:8px 10px;font-size:8px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--s2);border-bottom:1px solid var(--border);white-space:nowrap;text-align:center}
+thead th:first-child{padding-left:14px;text-align:left}
+tbody td{padding:0;border-bottom:1px solid #f0ede6;vertical-align:middle;height:38px;text-align:center}
+tbody tr:last-child td{border-bottom:none}tbody tr:hover td{background:#fafaf6}
+.tl{padding:0 10px 0 14px;font-size:11px;font-weight:600;color:var(--text);white-space:nowrap;text-align:left}
+.tv{padding:0 10px;font-size:12px;font-weight:500;color:var(--text);white-space:nowrap}
+.mrow td{background:#f7f5ef;border-bottom:2px solid var(--border)!important}
+.mrow .tl{font-size:9px;font-weight:700;color:var(--red);letter-spacing:.04em;text-transform:uppercase}
+td.ec{padding:0;background:var(--yc)}
+.ci{width:100%;height:38px;border:none;outline:none;background:var(--yc);text-align:center;font-size:12px;font-weight:600;font-family:'DM Sans',sans-serif;color:var(--text);padding:0 4px}
+.ci:focus{background:#fffae8;box-shadow:inset 0 0 0 1.5px #e0c060}.ci::placeholder{color:#d4c08a;font-weight:400;font-size:11px}
+.sb{display:inline-flex;align-items:center;gap:3px;font-size:9px;font-weight:700;padding:3px 8px;border-radius:4px;white-space:nowrap}
+.sb.ok{background:var(--gbg);color:var(--green)}.sb.bad{background:var(--rbg);color:var(--red)}
+.sb.warn{background:var(--ambg);color:var(--amber)}.sb.none{background:#f0ede8;color:var(--muted)}
+.vok{color:var(--green);font-weight:700}.vbad{color:var(--red);font-weight:700}.vwarn{color:var(--amber);font-weight:700}
+.btn{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;padding:7px 13px;border-radius:6px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:.15s}
+.btn-green{background:var(--green);color:#fff}.btn-green:hover{background:#256630}
+.btn-blue{background:#3b6faa;color:#fff}.btn-blue:hover{background:#2d5585}
+.btn-outline{background:var(--surface);color:var(--t2);border:1.5px solid var(--border)}.btn-outline:hover{background:var(--s2)}
+.tds{padding:0 12px;text-align:center}
+.hint{background:var(--ambg);border-top:1px solid #f0d090;padding:7px 14px;font-size:10px;color:var(--amber);font-weight:500}
+.hint-ro{background:var(--s2);border-top:1px solid var(--border);padding:7px 14px;font-size:10px;color:var(--t2)}
+.toast{position:fixed;bottom:24px;right:24px;padding:10px 18px;border-radius:8px;font-size:12px;font-weight:700;color:#fff;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.2);opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+/* GitHub config modal */
+.gh-overlay{position:fixed;inset:0;z-index:10000;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center}
+.gh-modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:32px 36px;width:400px;box-shadow:0 16px 64px rgba(0,0,0,.18);font-family:'DM Sans',sans-serif}
+.gh-modal h2{font-family:'DM Serif Display',serif;font-size:18px;color:var(--text);margin-bottom:4px}
+.gh-modal .gh-sub{font-size:11px;color:var(--muted);margin-bottom:24px;line-height:1.5}
+.gh-field{margin-bottom:14px}
+.gh-field label{display:block;font-size:10px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--t2);margin-bottom:5px}
+.gh-field input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:7px;font-family:'DM Sans',sans-serif;font-size:12px;outline:none;background:var(--s2);color:var(--text);box-sizing:border-box;transition:border-color .15s}
+.gh-field input:focus{border-color:var(--green);background:#fff}
+.gh-field .gh-hint{font-size:10px;color:var(--muted);margin-top:4px}
+.gh-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.gh-actions{display:flex;gap:8px;margin-top:22px;justify-content:flex-end}
+.gh-status{font-size:11px;margin-top:10px;padding:7px 10px;border-radius:6px;display:none}
+.gh-status.ok{background:var(--gbg);color:var(--green);display:block}
+.gh-status.err{background:var(--rbg);color:var(--red);display:block}
+.meta-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:12px 14px}
+.meta-val{font-size:22px;font-weight:700;color:var(--text);display:flex;align-items:baseline;gap:8px;margin:2px 0 6px}
+.meta-arrow{font-size:12px;font-weight:700}
+.tag-pill{display:inline-block;font-size:10px;font-weight:600;padding:2px 7px;border-radius:4px;margin-top:3px}
+@media(max-width:1100px){.kpi-6{grid-template-columns:repeat(3,1fr)}.kpi-7{grid-template-columns:repeat(4,1fr)}.kpi-8{grid-template-columns:repeat(4,1fr)}.kpi-9{grid-template-columns:repeat(3,1fr)}.kpi-3{grid-template-columns:repeat(2,1fr)}#kpi-charts-grid{grid-template-columns:repeat(2,1fr)!important}}
+@media(max-width:700px){.page{padding:14px 12px}.kpi-6{grid-template-columns:repeat(2,1fr)}}
+
+@media print {
+  @page { size: A4 landscape; margin: 10mm; }
+  body[data-print] .hdr,
+  body[data-print] nav.tabs,
+  body[data-print] #cx-login,
+  body[data-print] .toast,
+  body[data-print] .btn { display: none !important; }
+  body[data-print] .panel { display: none !important; }
+  body[data-print="tab-resumo"]  #tab-resumo,
+  body[data-print="tab-tayna"]   #tab-tayna,
+  body[data-print="tab-isabela"] #tab-isabela,
+  body[data-print="tab-gabriel"] #tab-gabriel { display: block !important; }
+  body[data-print] .page { padding: 4px !important; max-width: none !important; }
+  body { background: white !important; }
+  .chart-box  { page-break-inside: avoid; }
+  .tbl-wrap   { page-break-inside: avoid; }
+  .kpi-row    { page-break-inside: avoid; }
+  .sec        { page-break-after: avoid; }
+}
+</style>
+<script id="cx-snap">(function(){window.__snap={"tc":[{"solic":415,"respostas":78,"csat":91,"neutro":3,"neg":6},{"solic":424,"respostas":74,"csat":89,"neutro":5,"neg":5},{"solic":436,"respostas":85,"csat":89,"neutro":4,"neg":7},{"solic":304,"respostas":52,"csat":92,"neutro":2,"neg":6},{"solic":276,"respostas":53,"csat":100,"neutro":0,"neg":0},null,null,null,null,null,null,null],"tk":[[514,643,606,368,406,null,null,null,null,null,null,null],[32,20,20,13,9,null,null,null,null,null,null,null],[28,37,33,20,33,null,null,null,null,null,null,null],[27,23,21,15,17,null,null,null,null,null,null,null],[25,33,33,44,53,null,null,null,null,null,null,null],[90,94,95,97,98,null,null,null,null,null,null,null]],"ic":[{"solic":446,"respostas":58,"csat":74,"neutro":7,"neg":19},{"solic":420,"respostas":55,"csat":71,"neutro":8,"neg":21},{"solic":462,"respostas":79,"csat":75,"neutro":3,"neg":23},{"solic":296,"respostas":29,"csat":79,"neutro":3,"neg":17},{"solic":258,"respostas":35,"csat":86,"neutro":3,"neg":11},null,null,null,null,null,null,null],"ik":[[738,638,559,361,392,null,null,null,null,null,null,null],[32,14,6,5,2,null,null,null,null,null,null,null],[36,42,34,43,47,null,null,null,null,null,null,null],[17,19,28,15,16,null,null,null,null,null,null,null],[29,43,65,62,71,null,null,null,null,null,null,null],[86,97,99,97,100,null,null,null,null,null,null,null]],"gc":[null,null,{"solic":68,"respostas":10,"csat":90,"neutro":10,"neg":0},{"solic":261,"respostas":34,"csat":85,"neutro":6,"neg":9},{"solic":275,"respostas":47,"csat":87,"neutro":6,"neg":6},null,null,null,null,null,null,null],"gk":[[null,null,93,381,390,null,null,null,null,null,null,null],[null,null,30,20,7,null,null,null,null,null,null,null],[null,null,29,32,34,null,null,null,null,null,null,null],[null,null,8,10,13,null,null,null,null,null,null,null],[null,null,23,32,61,null,null,null,null,null,null,null],[null,null,100,91,99,null,null,null,null,null,null,null]],"ao":[null,null,null,null,null,null,null,null,null,null,null,null],"combo":{"resumo":[{"d":"Jan","tickets":1392,"tempo":32},{"d":"Fev","tickets":1322,"tempo":17},{"d":"Mar","tickets":1284,"tempo":11},{"d":"Abr","tickets":1113,"tempo":12},{"d":"Mai","tickets":1194,"tempo":6}],"t":[{"d":"04/mai","tickets":13,"tempo":47},{"d":"05/mai","tickets":27,"tempo":17},{"d":"06/mai","tickets":21,"tempo":5},{"d":"07/mai","tickets":19,"tempo":4},{"d":"08/mai","tickets":16,"tempo":12},{"d":"11/mai","tickets":18,"tempo":6},{"d":"12/mai","tickets":25,"tempo":14},{"d":"13/mai","tickets":23,"tempo":6},{"d":"14/mai","tickets":21,"tempo":6},{"d":"15/mai","tickets":15,"tempo":4},{"d":"18/mai","tickets":22,"tempo":8},{"d":"19/mai","tickets":19,"tempo":15},{"d":"20/mai","tickets":11,"tempo":5},{"d":"21/mai","tickets":16,"tempo":3},{"d":"22/mai","tickets":17,"tempo":3},{"d":"25/mai","tickets":7,"tempo":13},{"d":"26/mai","tickets":14,"tempo":3},{"d":"27/mai","tickets":10,"tempo":2},{"d":"28/mai","tickets":20,"tempo":2},{"d":"29/mai","tickets":12,"tempo":2}],"i":[{"d":"04/mai","tickets":35,"tempo":4},{"d":"05/mai","tickets":21,"tempo":6},{"d":"06/mai","tickets":20,"tempo":3},{"d":"07/mai","tickets":15,"tempo":5},{"d":"08/mai","tickets":14,"tempo":2},{"d":"11/mai","tickets":15,"tempo":3},{"d":"12/mai","tickets":18,"tempo":2},{"d":"13/mai","tickets":20,"tempo":2},{"d":"14/mai","tickets":17,"tempo":3},{"d":"15/mai","tickets":14,"tempo":2},{"d":"18/mai","tickets":15,"tempo":2},{"d":"19/mai","tickets":15,"tempo":3},{"d":"20/mai","tickets":12,"tempo":1},{"d":"21/mai","tickets":16,"tempo":2},{"d":"22/mai","tickets":14,"tempo":2},{"d":"25/mai","tickets":19,"tempo":2},{"d":"26/mai","tickets":10,"tempo":3},{"d":"27/mai","tickets":14,"tempo":2},{"d":"28/mai","tickets":13,"tempo":2},{"d":"29/mai","tickets":17,"tempo":2}],"g":[{"d":"04/mai","tickets":34,"tempo":22},{"d":"05/mai","tickets":23,"tempo":16},{"d":"06/mai","tickets":19,"tempo":5},{"d":"07/mai","tickets":17,"tempo":8},{"d":"08/mai","tickets":14,"tempo":7},{"d":"11/mai","tickets":15,"tempo":6},{"d":"12/mai","tickets":18,"tempo":11},{"d":"13/mai","tickets":20,"tempo":7},{"d":"14/mai","tickets":19,"tempo":8},{"d":"15/mai","tickets":14,"tempo":4},{"d":"18/mai","tickets":18,"tempo":7},{"d":"19/mai","tickets":15,"tempo":12},{"d":"20/mai","tickets":12,"tempo":4},{"d":"21/mai","tickets":14,"tempo":4},{"d":"22/mai","tickets":17,"tempo":5},{"d":"25/mai","tickets":16,"tempo":5},{"d":"26/mai","tickets":12,"tempo":5},{"d":"27/mai","tickets":17,"tempo":7},{"d":"28/mai","tickets":14,"tempo":7}]},"backlog":{"resumo":[{"d":"01/mai","novo":37,"cipv":9,"pend":43,"hold":42},{"d":"02/mai","novo":60,"cipv":10,"pend":43,"hold":41},{"d":"03/mai","novo":86,"cipv":0,"pend":43,"hold":41},{"d":"04/mai","novo":25,"cipv":0,"pend":83,"hold":56},{"d":"05/mai","novo":21,"cipv":0,"pend":58,"hold":52},{"d":"06/mai","novo":13,"cipv":13,"pend":46,"hold":42},{"d":"07/mai","novo":11,"cipv":11,"pend":45,"hold":40},{"d":"08/mai","novo":10,"cipv":6,"pend":49,"hold":38},{"d":"09/mai","novo":41,"cipv":9,"pend":49,"hold":38},{"d":"10/mai","novo":72,"cipv":0,"pend":48,"hold":38},{"d":"11/mai","novo":11,"cipv":11,"pend":74,"hold":43},{"d":"12/mai","novo":16,"cipv":16,"pend":56,"hold":43},{"d":"13/mai","novo":12,"cipv":12,"pend":65,"hold":43},{"d":"14/mai","novo":11,"cipv":11,"pend":37,"hold":35},{"d":"15/mai","novo":6,"cipv":6,"pend":40,"hold":31},{"d":"16/mai","novo":32,"cipv":10,"pend":40,"hold":31},{"d":"17/mai","novo":49,"cipv":14,"pend":39,"hold":30},{"d":"18/mai","novo":14,"cipv":14,"pend":58,"hold":36},{"d":"19/mai","novo":9,"cipv":9,"pend":50,"hold":34},{"d":"20/mai","novo":25,"cipv":11,"pend":50,"hold":28},{"d":"21/mai","novo":11,"cipv":11,"pend":33,"hold":22},{"d":"22/mai","novo":11,"cipv":11,"pend":27,"hold":27},{"d":"23/mai","novo":33,"cipv":6,"pend":28,"hold":26},{"d":"24/mai","novo":46,"cipv":8,"pend":28,"hold":25}],"t":[{"d":"01/mai","novo":0,"cipv":3,"pend":12,"hold":8},{"d":"02/mai","novo":0,"cipv":3,"pend":12,"hold":8},{"d":"03/mai","novo":0,"cipv":31,"pend":12,"hold":8},{"d":"04/mai","novo":0,"cipv":6,"pend":42,"hold":10},{"d":"05/mai","novo":0,"cipv":8,"pend":26,"hold":5},{"d":"06/mai","novo":0,"cipv":4,"pend":13,"hold":6},{"d":"07/mai","novo":0,"cipv":3,"pend":9,"hold":6},{"d":"08/mai","novo":0,"cipv":1,"pend":7,"hold":4},{"d":"09/mai","novo":0,"cipv":2,"pend":7,"hold":4},{"d":"10/mai","novo":0,"cipv":24,"pend":6,"hold":4},{"d":"11/mai","novo":0,"cipv":2,"pend":20,"hold":6},{"d":"12/mai","novo":0,"cipv":5,"pend":13,"hold":5},{"d":"13/mai","novo":0,"cipv":3,"pend":29,"hold":5},{"d":"14/mai","novo":0,"cipv":2,"pend":15,"hold":6},{"d":"15/mai","novo":0,"cipv":3,"pend":12,"hold":4},{"d":"16/mai","novo":0,"cipv":5,"pend":12,"hold":4},{"d":"17/mai","novo":0,"cipv":6,"pend":11,"hold":4},{"d":"18/mai","novo":0,"cipv":4,"pend":23,"hold":6},{"d":"19/mai","novo":0,"cipv":4,"pend":12,"hold":9},{"d":"20/mai","novo":0,"cipv":4,"pend":12,"hold":6},{"d":"21/mai","novo":0,"cipv":3,"pend":14,"hold":8},{"d":"22/mai","novo":0,"cipv":2,"pend":17,"hold":6},{"d":"23/mai","novo":0,"cipv":4,"pend":17,"hold":5},{"d":"24/mai","novo":0,"cipv":21,"pend":17,"hold":5},{"d":"25/mai","novo":0,"cipv":2,"pend":22,"hold":4},{"d":"26/mai","novo":0,"cipv":1,"pend":16,"hold":4},{"d":"27/mai","novo":0,"cipv":2,"pend":14,"hold":0},{"d":"28/mai","novo":0,"cipv":6,"pend":16,"hold":1},{"d":"29/mai","novo":0,"cipv":1,"pend":14,"hold":2},{"d":"30/mai","novo":0,"cipv":3,"pend":12,"hold":2},{"d":"31/mai","novo":0,"cipv":3,"pend":12,"hold":2}],"i":[{"d":"01/mai","novo":0,"cipv":1,"pend":9,"hold":12},{"d":"02/mai","novo":0,"cipv":2,"pend":9,"hold":11},{"d":"03/mai","novo":0,"cipv":25,"pend":9,"hold":11},{"d":"04/mai","novo":0,"cipv":6,"pend":7,"hold":11},{"d":"05/mai","novo":0,"cipv":5,"pend":13,"hold":11},{"d":"06/mai","novo":0,"cipv":3,"pend":9,"hold":10},{"d":"07/mai","novo":0,"cipv":3,"pend":11,"hold":11},{"d":"08/mai","novo":0,"cipv":0,"pend":7,"hold":12},{"d":"09/mai","novo":0,"cipv":1,"pend":7,"hold":12},{"d":"10/mai","novo":0,"cipv":22,"pend":7,"hold":12},{"d":"11/mai","novo":0,"cipv":3,"pend":15,"hold":13},{"d":"12/mai","novo":0,"cipv":4,"pend":11,"hold":12},{"d":"13/mai","novo":0,"cipv":3,"pend":10,"hold":15},{"d":"14/mai","novo":0,"cipv":2,"pend":10,"hold":13},{"d":"15/mai","novo":0,"cipv":0,"pend":7,"hold":13},{"d":"16/mai","novo":0,"cipv":3,"pend":7,"hold":13},{"d":"17/mai","novo":0,"cipv":4,"pend":7,"hold":13},{"d":"18/mai","novo":0,"cipv":4,"pend":6,"hold":15},{"d":"19/mai","novo":0,"cipv":3,"pend":10,"hold":10},{"d":"20/mai","novo":0,"cipv":2,"pend":3,"hold":10},{"d":"21/mai","novo":0,"cipv":3,"pend":4,"hold":8},{"d":"22/mai","novo":0,"cipv":0,"pend":3,"hold":7},{"d":"23/mai","novo":0,"cipv":0,"pend":3,"hold":7},{"d":"24/mai","novo":0,"cipv":17,"pend":3,"hold":7},{"d":"25/mai","novo":0,"cipv":3,"pend":20,"hold":7},{"d":"26/mai","novo":0,"cipv":3,"pend":11,"hold":7},{"d":"27/mai","novo":0,"cipv":1,"pend":25,"hold":7},{"d":"28/mai","novo":0,"cipv":5,"pend":14,"hold":9},{"d":"29/mai","novo":0,"cipv":1,"pend":5,"hold":11},{"d":"30/mai","novo":0,"cipv":1,"pend":5,"hold":11},{"d":"31/mai","novo":0,"cipv":2,"pend":5,"hold":10}],"g":[{"d":"01/mai","novo":0,"cipv":5,"pend":22,"hold":19},{"d":"02/mai","novo":0,"cipv":5,"pend":22,"hold":19},{"d":"03/mai","novo":0,"cipv":30,"pend":22,"hold":19},{"d":"04/mai","novo":0,"cipv":13,"pend":34,"hold":32},{"d":"05/mai","novo":0,"cipv":7,"pend":19,"hold":34},{"d":"06/mai","novo":0,"cipv":6,"pend":23,"hold":24},{"d":"07/mai","novo":0,"cipv":5,"pend":24,"hold":21},{"d":"08/mai","novo":0,"cipv":5,"pend":34,"hold":20},{"d":"09/mai","novo":0,"cipv":6,"pend":34,"hold":20},{"d":"10/mai","novo":0,"cipv":26,"pend":34,"hold":20},{"d":"11/mai","novo":0,"cipv":6,"pend":38,"hold":22},{"d":"12/mai","novo":0,"cipv":7,"pend":32,"hold":19},{"d":"13/mai","novo":0,"cipv":6,"pend":26,"hold":21},{"d":"14/mai","novo":0,"cipv":7,"pend":12,"hold":15},{"d":"15/mai","novo":0,"cipv":1,"pend":21,"hold":13},{"d":"16/mai","novo":0,"cipv":2,"pend":21,"hold":13},{"d":"17/mai","novo":0,"cipv":4,"pend":21,"hold":12},{"d":"18/mai","novo":0,"cipv":6,"pend":29,"hold":14},{"d":"19/mai","novo":0,"cipv":2,"pend":28,"hold":14},{"d":"20/mai","novo":0,"cipv":5,"pend":10,"hold":11},{"d":"21/mai","novo":0,"cipv":5,"pend":15,"hold":13},{"d":"22/mai","novo":0,"cipv":1,"pend":8,"hold":13},{"d":"23/mai","novo":0,"cipv":2,"pend":8,"hold":13},{"d":"24/mai","novo":0,"cipv":20,"pend":8,"hold":11},{"d":"25/mai","novo":0,"cipv":9,"pend":22,"hold":12},{"d":"26/mai","novo":0,"cipv":5,"pend":17,"hold":16},{"d":"27/mai","novo":0,"cipv":3,"pend":13,"hold":10},{"d":"28/mai","novo":0,"cipv":6,"pend":9,"hold":8},{"d":"29/mai","novo":0,"cipv":2,"pend":13,"hold":10},{"d":"30/mai","novo":0,"cipv":6,"pend":12,"hold":8},{"d":"31/mai","novo":0,"cipv":8,"pend":11,"hold":8}]}};})()</script><meta id="bbafmabaelnnkondpfpjmdklbmfnbmol"><meta id="dcngeagmmhegagicpcmpinaoklddcgon"><meta id="bbafmabaelnnkondpfpjmdklbmfnbmol"><meta id="dcngeagmmhegagicpcmpinaoklddcgon"></head>
+<body>
+<div style="padding:20px 24px">
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--text)">CX Analytics</div>
+    <div style="font-size:12px;color:var(--muted)">Customer Experience · Tania Bulhões · 2026</div>
+  </div>
+  <div style="margin-bottom:20px;border-bottom:2px solid var(--accent);padding-bottom:8px;display:inline-flex;align-items:center;gap:8px">
+    <span style="font-size:15px">📅</span>
+    <span style="font-family:DM Sans,sans-serif;font-size:14px;font-weight:700;color:var(--accent)">Metas &amp; Resultados</span>
+  </div>
+  <div id="tab-resumo" class="panel">
+
+  <!-- ① KPIs Operacionais Área -->
+  <div class="sec" style="margin-top:4px">KPIs Operacionais — <span>Área · Último mês</span> <span class="sec-tag" id="resumo-kpi-tag">Mai/26</span></div>
+  <div class="kpi-row kpi-8" id="resumo-area-kpis"><div class="kpi-card none"><div class="kpi-label">Total de Tickets</div><div class="kpi-val none">1188</div><div class="kpi-sub">Volume </div></div><div class="kpi-card ok"><div class="kpi-label">CSAT</div><div class="kpi-val ok">91.8%</div><div class="kpi-sub">≥90% <span class="kbadge ok">✅ Acima</span></div></div><div class="kpi-card ok"><div class="kpi-label">TMA 1ª Resposta</div><div class="kpi-val ok">6 min</div><div class="kpi-sub">≤12 min <span class="kbadge ok">✅ Acima</span></div></div><div class="kpi-card bad"><div class="kpi-label">Resolvidos 1° Contato</div><div class="kpi-val bad">37,9%</div><div class="kpi-sub">≥50% <span class="kbadge bad">⚠️ Abaixo</span></div></div><div class="kpi-card warn"><div class="kpi-label">Tickets Reabertos</div><div class="kpi-val warn">15,4%</div><div class="kpi-sub">≤15% <span class="kbadge warn">⚠️ Atenção</span></div></div><div class="kpi-card ok"><div class="kpi-label">SLA WhatsApp</div><div class="kpi-val ok">61,6%</div><div class="kpi-sub">≥60% <span class="kbadge ok">✅ Acima</span></div></div><div class="kpi-card ok"><div class="kpi-label">SLA E-mail</div><div class="kpi-val ok">99%</div><div class="kpi-sub">≥95% <span class="kbadge ok">✅ Acima</span></div></div><div class="kpi-card warn"><div class="kpi-label">Metas Atingidas</div><div class="kpi-val warn">4 de 7</div><div class="kpi-sub">Indicadores no mês <span class="kbadge warn">⚠️ Atenção</span></div></div></div>
+
+  <!-- ② CSAT Acumulado Área -->
+  <div class="sec">CSAT — <span>Acumulado do Ano · Área</span> <span class="sec-tag" id="resumo-csat-tag">Mai/26</span></div>
+  <div class="kpi-row kpi-6" id="resumo-area-csat-kpis"><div class="kpi-card ok"><div class="kpi-label">CSAT Médio (YTD)</div><div class="kpi-val ok">91.8%</div><div class="kpi-sub">≥90% <span class="kbadge ok">✅ Acima</span></div></div>
+<div class="kpi-card bad"><div class="kpi-label">Negativo Médio</div><div class="kpi-val bad">10.4%</div><div class="kpi-sub">≤6% <span class="kbadge bad">⚠️ Abaixo</span></div></div>
+<div class="kpi-card warn"><div class="kpi-label">Neutro Médio</div><div class="kpi-val warn">4.2%</div><div class="kpi-sub">≤4% <span class="kbadge warn">⚠️ Atenção</span></div></div>
+<div class="kpi-card bad"><div class="kpi-label">Tx. Resposta (YTD)</div><div class="kpi-val bad">16%</div><div class="kpi-sub">≥25% <span class="kbadge bad">⚠️ Abaixo</span></div></div>
+<div class="kpi-card none"><div class="kpi-label">Total Solicitações</div><div class="kpi-val none">4.341</div><div class="kpi-sub">Acumulado </div></div>
+<div class="kpi-card none"><div class="kpi-label">Total Respostas</div><div class="kpi-val none">689</div><div class="kpi-sub">Acumulado </div></div></div>
+
+  <!-- ③ YTD acumulado: 8 cards -->
+  <div class="sec" style="margin-top:4px">Acumulado YTD — <span>Área · 2026</span></div>
+  <div id="resumo-hero" style="display:grid;grid-template-columns:repeat(8,1fr);gap:1px;background:var(--border);border-radius:var(--r);overflow:hidden;border:1px solid var(--border);margin-bottom:22px"><div class="kpi-card warn" style="background:var(--surface);padding:16px 16px 13px;position:relative"><div class="kpi-label">CSAT Médio (YTD)</div><div class="kpi-val warn" style="font-family:'DM Serif Display',serif;font-size:26px;line-height:1;margin-bottom:4px;display:inline-block">85.3%</div><div class="kpi-sub">≥90% <span class="kbadge warn">Atenção</span></div></div><div class="kpi-card bad" style="background:var(--surface);padding:16px 16px 13px;position:relative"><div class="kpi-label">Tx. Resposta (YTD)</div><div class="kpi-val bad" style="font-family:'DM Serif Display',serif;font-size:26px;line-height:1;margin-bottom:4px;display:inline-block">16%</div><div class="kpi-sub">≥25% <span class="kbadge bad">Fora da meta</span></div></div><div class="kpi-card bad" style="background:var(--surface);padding:16px 16px 13px;position:relative"><div class="kpi-label">TMA (YTD)</div><div class="kpi-val bad" style="font-family:'DM Serif Display',serif;font-size:26px;line-height:1;margin-bottom:4px;display:inline-block">16,5 min</div><div class="kpi-sub">≤12 min <span class="kbadge bad">Fora da meta</span></div></div><div class="kpi-card bad" style="background:var(--surface);padding:16px 16px 13px;position:relative"><div class="kpi-label">FCR (YTD)</div><div class="kpi-val bad" style="font-family:'DM Serif Display',serif;font-size:26px;line-height:1;margin-bottom:4px;display:inline-block">35,0%</div><div class="kpi-sub">≥50% <span class="kbadge bad">Fora da meta</span></div></div><div class="kpi-card bad" style="background:var(--surface);padding:16px 16px 13px;position:relative"><div class="kpi-label">Reabertos (YTD)</div><div class="kpi-val bad" style="font-family:'DM Serif Display',serif;font-size:26px;line-height:1;margin-bottom:4px;display:inline-block">18,8%</div><div class="kpi-sub">≤15% <span class="kbadge bad">Fora da meta</span></div></div><div class="kpi-card bad" style="background:var(--surface);padding:16px 16px 13px;position:relative"><div class="kpi-label">SLA WP (YTD)</div><div class="kpi-val bad" style="font-family:'DM Serif Display',serif;font-size:26px;line-height:1;margin-bottom:4px;display:inline-block">43,8%</div><div class="kpi-sub">≥60% <span class="kbadge bad">Fora da meta</span></div></div><div class="kpi-card warn" style="background:var(--surface);padding:16px 16px 13px;position:relative"><div class="kpi-label">SLA E-mail (YTD)</div><div class="kpi-val warn" style="font-family:'DM Serif Display',serif;font-size:26px;line-height:1;margin-bottom:4px;display:inline-block">94,8%</div><div class="kpi-sub">≥95% <span class="kbadge warn">Atenção</span></div></div><div class="kpi-card bad" style="background:var(--surface);padding:16px 16px 13px;position:relative"><div class="kpi-label">Metas Atingidas</div><div class="kpi-val bad" style="font-family:'DM Serif Display',serif;font-size:26px;line-height:1;margin-bottom:4px;display:inline-block">0%</div><div class="kpi-sub">0 de 7 indicadores na média YTD <span class="kbadge bad">Fora da meta</span></div></div></div>
+
+  <!-- ⑤ Tabela mensal full-width -->
+  <div style="background:#fff;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:16px;box-shadow:var(--shadow)">
+    <!-- cabeçalho do card -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px">
+      <span style="font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)">Resumo mensal</span>
+      <span style="font-size:10px;color:var(--muted)">
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:3px;vertical-align:middle"></span>Dentro da meta 
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--amber);margin-right:3px;vertical-align:middle"></span>Próximo 
+        <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--red);margin-right:3px;vertical-align:middle"></span>Fora da meta
+      </span>
+    </div>
+    <table style="width:100%;border-collapse:collapse">
+      <thead>
+        <tr style="background:#faf8f4;border-top:1px solid var(--border)">
+          <th style="padding:10px 10px 10px 20px;text-align:left;font-size:9px;font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);white-space:nowrap;width:90px">Mês</th>
+          <th style="padding:10px 18px;text-align:left;font-size:9px;font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);white-space:nowrap">CSAT</th>
+          <th style="padding:10px 18px;text-align:left;font-size:9px;font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);white-space:nowrap">TX. RESP.</th>
+          <th style="padding:10px 18px;text-align:left;font-size:9px;font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);white-space:nowrap">TMA</th>
+          <th style="padding:10px 18px;text-align:left;font-size:9px;font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);white-space:nowrap">FCR</th>
+          <th style="padding:10px 18px;text-align:left;font-size:9px;font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);white-space:nowrap">REABERTOS</th>
+          <th style="padding:10px 18px;text-align:left;font-size:9px;font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);white-space:nowrap">SLA WP</th>
+          <th style="padding:10px 18px;text-align:left;font-size:9px;font-weight:600;letter-spacing:.10em;text-transform:uppercase;color:var(--muted);white-space:nowrap">SLA E-MAIL</th>
+        </tr>
+      </thead>
+      <tbody id="resumo-timeline-tbody"><tr style="background:#fff;border-left:3px solid transparent"><td style="padding:14px 10px 14px 20px;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;font-family:'DM Sans',sans-serif">Jan</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--amber);font-family:'DM Sans',sans-serif">83.8%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">16%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">32 min</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">32.7%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">21.1%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">27.4%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--amber);font-family:'DM Sans',sans-serif">87.6%</td></tr><tr style="background:#fff;border-left:3px solid transparent"><td style="padding:14px 10px 14px 20px;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;font-family:'DM Sans',sans-serif">Fev</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--amber);font-family:'DM Sans',sans-serif">81.3%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">15%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">17 min</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">39.5%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">21%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">38%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--green);font-family:'DM Sans',sans-serif">95.5%</td></tr><tr style="background:#fff;border-left:3px solid transparent"><td style="padding:14px 10px 14px 20px;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;font-family:'DM Sans',sans-serif">Mar</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--amber);font-family:'DM Sans',sans-serif">82.7%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">18%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">14.5 min</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">33.1%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">23.1%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">46.5%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--green);font-family:'DM Sans',sans-serif">97.1%</td></tr><tr style="background:#fff;border-left:3px solid transparent"><td style="padding:14px 10px 14px 20px;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;font-family:'DM Sans',sans-serif">Abr</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--amber);font-family:'DM Sans',sans-serif">86.7%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">13%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--amber);font-family:'DM Sans',sans-serif">12.8 min</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">31.6%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--green);font-family:'DM Sans',sans-serif">13.3%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">45.7%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--amber);font-family:'DM Sans',sans-serif">94.9%</td></tr><tr style="background:#fafaf4;border-left:3px solid var(--green)"><td style="padding:14px 10px 14px 20px;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;font-family:'DM Sans',sans-serif">Mai</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--green);font-family:'DM Sans',sans-serif">91.8%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">17%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--green);font-family:'DM Sans',sans-serif">6 min</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--red);font-family:'DM Sans',sans-serif">37.9%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--amber);font-family:'DM Sans',sans-serif">15.4%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--green);font-family:'DM Sans',sans-serif">61.6%</td><td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--green);font-family:'DM Sans',sans-serif">99%</td></tr></tbody>
+    </table>
+  </div>
+
+  <!-- ⑥ Análise Visual -->
+  <div class="sec" style="margin-top:20px">Painel Visual — <span>Área · 2026 · Evolução dos Indicadores</span></div>
+
+  <!-- CSAT destaque full-width -->
+  <div class="chart-box" style="margin-bottom:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div>
+        <div class="cblabel" style="margin-bottom:1px"><span class="dot" style="background:#2f7a3b"></span>CSAT &amp; Taxa de Resposta — Evolução Mensal</div>
+        <div class="cbsub">Barras = CSAT % · Linha = Tx. Resposta · linhas tracejadas = metas (90% / 25%)</div>
+      </div>
+      <div id="rc-csat-ytd-badge" style="font-family: &quot;DM Serif Display&quot;, serif; font-size: 22px; line-height: 1; color: var(--red);">YTD 85.3%</div>
+    </div>
+    <canvas id="rc_csat_tx" height="409" style="box-sizing: border-box; display: block; height: 327px; width: 1402px;" width="1753"></canvas>
+  </div>
+
+  <!-- Combo: Tempo 1ª Resposta × Tickets -->
+  <div class="sec" style="margin-top:20px">Tempo 1ª Resposta — <span>Área · Histórico Mensal</span></div>
+  <div class="panel-card">
+    <div class="panel-hdr">
+      <div class="panel-title">Tempo da Primeira Resposta × Qtd. Tickets</div>
+      <div class="chart-legend">
+        <span><span class="chart-legend-dot" style="background:#cbd5e1;border-radius:2px"></span>Qtd. Tickets</span>
+        <span><span class="chart-legend-dot" style="background:#0ea5e9;border-radius:50%"></span>Tempo 1ª Resposta</span>
+      </div>
+    </div>
+    <div class="combo-svg-wrap" id="combo-resumo-wrap"><svg viewBox="0 0 900 380" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:380px;display:block;overflow:visible"><line x1="52" y1="330" x2="836" y2="330" stroke="#f0ece6" stroke-width="1"></line><line x1="52" y1="253.5" x2="836" y2="253.5" stroke="#f0ece6" stroke-width="1"></line><line x1="52" y1="177" x2="836" y2="177" stroke="#f0ece6" stroke-width="1"></line><line x1="52" y1="100.5" x2="836" y2="100.5" stroke="#f0ece6" stroke-width="1"></line><line x1="52" y1="24" x2="836" y2="24" stroke="#f0ece6" stroke-width="1"></line><line x1="52" y1="24" x2="52" y2="330" stroke="#e2ddd6" stroke-width="1"></line><line x1="52" y1="330" x2="836" y2="330" stroke="#e2ddd6" stroke-width="1"></line><text x="46" y="334" text-anchor="end" font-size="10" fill="#9e9894" font-family="DM Sans">0</text><text x="46" y="257.5" text-anchor="end" font-size="10" fill="#9e9894" font-family="DM Sans">350</text><text x="46" y="181" text-anchor="end" font-size="10" fill="#9e9894" font-family="DM Sans">700</text><text x="46" y="104.5" text-anchor="end" font-size="10" fill="#9e9894" font-family="DM Sans">1050</text><text x="46" y="28" text-anchor="end" font-size="10" fill="#9e9894" font-family="DM Sans">1400</text><text x="844" y="334" text-anchor="start" font-size="10" fill="#0ea5e9" font-family="DM Sans">0 min</text><text x="844" y="257.5" text-anchor="start" font-size="10" fill="#0ea5e9" font-family="DM Sans">9 min</text><text x="844" y="181" text-anchor="start" font-size="10" fill="#0ea5e9" font-family="DM Sans">18 min</text><text x="844" y="104.5" text-anchor="start" font-size="10" fill="#0ea5e9" font-family="DM Sans">26 min</text><text x="844" y="28" text-anchor="start" font-size="10" fill="#0ea5e9" font-family="DM Sans">35 min</text><rect x="87.3" y="25.7" width="86.2" height="304.3" rx="3" fill="rgba(203,213,225,0.8)"></rect><text x="130.4" y="322.0" text-anchor="middle" font-size="11" fill="#7a8fa6" font-family="DM Sans" font-weight="700">1392</text><rect x="244.1" y="41.0" width="86.2" height="289.0" rx="3" fill="rgba(203,213,225,0.8)"></rect><text x="287.2" y="322.0" text-anchor="middle" font-size="11" fill="#7a8fa6" font-family="DM Sans" font-weight="700">1322</text><rect x="400.9" y="49.4" width="86.2" height="280.6" rx="3" fill="rgba(203,213,225,0.8)"></rect><text x="444.0" y="322.0" text-anchor="middle" font-size="11" fill="#7a8fa6" font-family="DM Sans" font-weight="700">1284</text><rect x="557.7" y="86.7" width="86.2" height="243.3" rx="3" fill="rgba(203,213,225,0.8)"></rect><text x="600.8" y="322.0" text-anchor="middle" font-size="11" fill="#7a8fa6" font-family="DM Sans" font-weight="700">1113</text><rect x="714.5" y="69.0" width="86.2" height="261.0" rx="3" fill="rgba(203,213,225,0.8)"></rect><text x="757.6" y="322.0" text-anchor="middle" font-size="11" fill="#7a8fa6" font-family="DM Sans" font-weight="700">1194</text><path d="M 130.4,50.2 C 208.8,50.2 208.8,181.4 287.2,181.4 C 365.6,181.4 365.6,233.8 444.0,233.8 C 522.4,233.8 522.4,225.1 600.8,225.1 C 679.2,225.1 679.2,277.5 757.6,277.5" fill="none" stroke="#0ea5e9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path><rect x="109.6" y="22.0" width="41.6" height="14" rx="7" fill="#e0f2fe" opacity="0.9"></rect><text x="130.4" y="32.0" text-anchor="middle" font-size="10" fill="#0369a1" font-family="DM Sans" font-weight="700">32 min</text><rect x="266.4" y="147.4" width="41.6" height="14" rx="7" fill="#e0f2fe" opacity="0.9"></rect><text x="287.2" y="157.4" text-anchor="middle" font-size="10" fill="#0369a1" font-family="DM Sans" font-weight="700">17 min</text><rect x="423.2" y="199.8" width="41.6" height="14" rx="7" fill="#e0f2fe" opacity="0.9"></rect><text x="444.0" y="209.8" text-anchor="middle" font-size="10" fill="#0369a1" font-family="DM Sans" font-weight="700">11 min</text><rect x="580.0" y="191.1" width="41.6" height="14" rx="7" fill="#e0f2fe" opacity="0.9"></rect><text x="600.8" y="201.1" text-anchor="middle" font-size="10" fill="#0369a1" font-family="DM Sans" font-weight="700">12 min</text><rect x="739.6" y="243.5" width="36.0" height="14" rx="7" fill="#e0f2fe" opacity="0.9"></rect><text x="757.6" y="253.5" text-anchor="middle" font-size="10" fill="#0369a1" font-family="DM Sans" font-weight="700">6 min</text><circle cx="130.4" cy="50.2" r="4" fill="#0ea5e9" stroke="#fff" stroke-width="2"></circle><circle cx="287.2" cy="181.4" r="4" fill="#0ea5e9" stroke="#fff" stroke-width="2"></circle><circle cx="444.0" cy="233.8" r="4" fill="#0ea5e9" stroke="#fff" stroke-width="2"></circle><circle cx="600.8" cy="225.1" r="4" fill="#0ea5e9" stroke="#fff" stroke-width="2"></circle><circle cx="757.6" cy="277.5" r="4" fill="#0ea5e9" stroke="#fff" stroke-width="2"></circle><text x="130.4" y="374" text-anchor="middle" font-size="10" fill="#9e9894" font-family="DM Sans">Jan</text><text x="287.2" y="374" text-anchor="middle" font-size="10" fill="#9e9894" font-family="DM Sans">Fev</text><text x="444.0" y="374" text-anchor="middle" font-size="10" fill="#9e9894" font-family="DM Sans">Mar</text><text x="600.8" y="374" text-anchor="middle" font-size="10" fill="#9e9894" font-family="DM Sans">Abr</text><text x="757.6" y="374" text-anchor="middle" font-size="10" fill="#9e9894" font-family="DM Sans">Mai</text></svg></div>
+  </div>
+
+  <!-- Backlog -->
+  <div class="sec">Backlog — <span>Área · Histórico Diário por Status</span></div>
+  <div class="panel-card">
+    <div class="panel-hdr">
+      <div class="panel-title">Backlog — Histórico Diário por Status</div>
+    </div>
+    <div class="bk-legend">
+      <div class="bk-legend-item"><div class="bk-legend-dot" style="background:#e8a951"></div>Novo</div>
+      <div class="bk-legend-item"><div class="bk-legend-dot" style="background:#d97b72"></div>Aberto</div>
+      <div class="bk-legend-item"><div class="bk-legend-dot" style="background:#7aaac8"></div>Pendente</div>
+      <div class="bk-legend-item"><div class="bk-legend-dot" style="background:#b8b4ae"></div>Em Espera</div>
+    </div>
+    <div class="backlog-svg-wrap"><div id="backlog-resumo-chart" style="min-width:900px;height:460px;display:flex;align-items:flex-end;gap:3px;padding-bottom:26px;position:relative"><svg viewBox="0 0 920 460" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:460px;display:block"><rect x="5.4" y="343.0" width="27.6" height="91" fill="#e8a951" rx="1"></rect><text x="19.2" y="392.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">37</text><rect x="5.4" y="319.0" width="27.6" height="24" fill="#d97b72" rx="1"></rect><text x="19.2" y="335.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">9</text><rect x="5.4" y="214.0" width="27.6" height="105" fill="#7aaac8" rx="1"></rect><text x="19.2" y="270.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">43</text><rect x="5.4" y="111.0" width="27.6" height="103" fill="#b0b0b0" rx="1"></rect><text x="19.2" y="166.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">42</text><text x="19.2" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">01/mai</text><rect x="43.7" y="287.0" width="27.6" height="147" fill="#e8a951" rx="1"></rect><text x="57.5" y="364.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">60</text><rect x="43.7" y="263.0" width="27.6" height="24" fill="#d97b72" rx="1"></rect><text x="57.5" y="279.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">10</text><rect x="43.7" y="158.0" width="27.6" height="105" fill="#7aaac8" rx="1"></rect><text x="57.5" y="214.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">43</text><rect x="43.7" y="58.0" width="27.6" height="100" fill="#b0b0b0" rx="1"></rect><text x="57.5" y="112.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">41</text><text x="57.5" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">02/mai</text><rect x="82.0" y="224.0" width="27.6" height="210" fill="#e8a951" rx="1"></rect><text x="95.8" y="333.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">86</text><rect x="82.0" y="119.0" width="27.6" height="105" fill="#7aaac8" rx="1"></rect><text x="95.8" y="175.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">43</text><rect x="82.0" y="19.0" width="27.6" height="100" fill="#b0b0b0" rx="1"></rect><text x="95.8" y="73.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">41</text><text x="95.8" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">03/mai</text><rect x="120.4" y="373.0" width="27.6" height="61" fill="#e8a951" rx="1"></rect><text x="134.2" y="407.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">25</text><rect x="120.4" y="170.0" width="27.6" height="203" fill="#7aaac8" rx="1"></rect><text x="134.2" y="275.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">83</text><rect x="120.4" y="33.0" width="27.6" height="137" fill="#b0b0b0" rx="1"></rect><text x="134.2" y="105.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">56</text><text x="134.2" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">04/mai</text><rect x="158.7" y="383.0" width="27.6" height="51" fill="#e8a951" rx="1"></rect><text x="172.5" y="412.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">21</text><rect x="158.7" y="241.0" width="27.6" height="142" fill="#7aaac8" rx="1"></rect><text x="172.5" y="316.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">58</text><rect x="158.7" y="114.0" width="27.6" height="127" fill="#b0b0b0" rx="1"></rect><text x="172.5" y="181.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">52</text><text x="172.5" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">05/mai</text><rect x="197.0" y="402.0" width="27.6" height="32" fill="#e8a951" rx="1"></rect><text x="210.8" y="422.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">13</text><rect x="197.0" y="370.0" width="27.6" height="32" fill="#d97b72" rx="1"></rect><text x="210.8" y="390.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">13</text><rect x="197.0" y="257.0" width="27.6" height="113" fill="#7aaac8" rx="1"></rect><text x="210.8" y="317.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">46</text><rect x="197.0" y="154.0" width="27.6" height="103" fill="#b0b0b0" rx="1"></rect><text x="210.8" y="209.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">42</text><text x="210.8" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">06/mai</text><rect x="235.4" y="407.0" width="27.6" height="27" fill="#e8a951" rx="1"></rect><text x="249.2" y="424.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">11</text><rect x="235.4" y="380.0" width="27.6" height="27" fill="#d97b72" rx="1"></rect><text x="249.2" y="397.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">11</text><rect x="235.4" y="270.0" width="27.6" height="110" fill="#7aaac8" rx="1"></rect><text x="249.2" y="329.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">45</text><rect x="235.4" y="172.0" width="27.6" height="98" fill="#b0b0b0" rx="1"></rect><text x="249.2" y="225.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">40</text><text x="249.2" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">07/mai</text><rect x="273.7" y="410.0" width="27.6" height="24" fill="#e8a951" rx="1"></rect><text x="287.5" y="426.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">10</text><rect x="273.7" y="386.0" width="27.6" height="24" fill="#d97b72" rx="1"></rect><text x="287.5" y="402.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">6</text><rect x="273.7" y="266.0" width="27.6" height="120" fill="#7aaac8" rx="1"></rect><text x="287.5" y="330.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">49</text><rect x="273.7" y="173.0" width="27.6" height="93" fill="#b0b0b0" rx="1"></rect><text x="287.5" y="223.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">38</text><text x="287.5" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">08/mai</text><rect x="312.0" y="334.0" width="27.6" height="100" fill="#e8a951" rx="1"></rect><text x="325.8" y="388.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">41</text><rect x="312.0" y="310.0" width="27.6" height="24" fill="#d97b72" rx="1"></rect><text x="325.8" y="326.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">9</text><rect x="312.0" y="190.0" width="27.6" height="120" fill="#7aaac8" rx="1"></rect><text x="325.8" y="254.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">49</text><rect x="312.0" y="97.0" width="27.6" height="93" fill="#b0b0b0" rx="1"></rect><text x="325.8" y="147.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">38</text><text x="325.8" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">09/mai</text><rect x="350.4" y="258.0" width="27.6" height="176" fill="#e8a951" rx="1"></rect><text x="364.2" y="350.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">72</text><rect x="350.4" y="141.0" width="27.6" height="117" fill="#7aaac8" rx="1"></rect><text x="364.2" y="203.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">48</text><rect x="350.4" y="48.0" width="27.6" height="93" fill="#b0b0b0" rx="1"></rect><text x="364.2" y="98.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">38</text><text x="364.2" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">10/mai</text><rect x="388.7" y="407.0" width="27.6" height="27" fill="#e8a951" rx="1"></rect><text x="402.5" y="424.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">11</text><rect x="388.7" y="380.0" width="27.6" height="27" fill="#d97b72" rx="1"></rect><text x="402.5" y="397.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">11</text><rect x="388.7" y="199.0" width="27.6" height="181" fill="#7aaac8" rx="1"></rect><text x="402.5" y="293.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">74</text><rect x="388.7" y="94.0" width="27.6" height="105" fill="#b0b0b0" rx="1"></rect><text x="402.5" y="150.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">43</text><text x="402.5" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">11/mai</text><rect x="427.0" y="395.0" width="27.6" height="39" fill="#e8a951" rx="1"></rect><text x="440.8" y="418.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">16</text><rect x="427.0" y="356.0" width="27.6" height="39" fill="#d97b72" rx="1"></rect><text x="440.8" y="379.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">16</text><rect x="427.0" y="219.0" width="27.6" height="137" fill="#7aaac8" rx="1"></rect><text x="440.8" y="291.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">56</text><rect x="427.0" y="114.0" width="27.6" height="105" fill="#b0b0b0" rx="1"></rect><text x="440.8" y="170.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">43</text><text x="440.8" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">12/mai</text><rect x="465.4" y="405.0" width="27.6" height="29" fill="#e8a951" rx="1"></rect><text x="479.2" y="423.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">12</text><rect x="465.4" y="376.0" width="27.6" height="29" fill="#d97b72" rx="1"></rect><text x="479.2" y="394.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">12</text><rect x="465.4" y="217.0" width="27.6" height="159" fill="#7aaac8" rx="1"></rect><text x="479.2" y="300.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">65</text><rect x="465.4" y="112.0" width="27.6" height="105" fill="#b0b0b0" rx="1"></rect><text x="479.2" y="168.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">43</text><text x="479.2" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">13/mai</text><rect x="503.7" y="407.0" width="27.6" height="27" fill="#e8a951" rx="1"></rect><text x="517.5" y="424.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">11</text><rect x="503.7" y="380.0" width="27.6" height="27" fill="#d97b72" rx="1"></rect><text x="517.5" y="397.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">11</text><rect x="503.7" y="289.0" width="27.6" height="91" fill="#7aaac8" rx="1"></rect><text x="517.5" y="338.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">37</text><rect x="503.7" y="203.0" width="27.6" height="86" fill="#b0b0b0" rx="1"></rect><text x="517.5" y="250.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">35</text><text x="517.5" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">14/mai</text><rect x="542.0" y="410.0" width="27.6" height="24" fill="#e8a951" rx="1"></rect><text x="555.8" y="426.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">6</text><rect x="542.0" y="386.0" width="27.6" height="24" fill="#d97b72" rx="1"></rect><text x="555.8" y="402.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">6</text><rect x="542.0" y="288.0" width="27.6" height="98" fill="#7aaac8" rx="1"></rect><text x="555.8" y="341.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">40</text><rect x="542.0" y="212.0" width="27.6" height="76" fill="#b0b0b0" rx="1"></rect><text x="555.8" y="254.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">31</text><text x="555.8" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">15/mai</text><rect x="580.4" y="356.0" width="27.6" height="78" fill="#e8a951" rx="1"></rect><text x="594.2" y="399.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">32</text><rect x="580.4" y="332.0" width="27.6" height="24" fill="#d97b72" rx="1"></rect><text x="594.2" y="348.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">10</text><rect x="580.4" y="234.0" width="27.6" height="98" fill="#7aaac8" rx="1"></rect><text x="594.2" y="287.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">40</text><rect x="580.4" y="158.0" width="27.6" height="76" fill="#b0b0b0" rx="1"></rect><text x="594.2" y="200.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">31</text><text x="594.2" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">16/mai</text><rect x="618.7" y="314.0" width="27.6" height="120" fill="#e8a951" rx="1"></rect><text x="632.5" y="378.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">49</text><rect x="618.7" y="280.0" width="27.6" height="34" fill="#d97b72" rx="1"></rect><text x="632.5" y="301.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">14</text><rect x="618.7" y="185.0" width="27.6" height="95" fill="#7aaac8" rx="1"></rect><text x="632.5" y="236.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">39</text><rect x="618.7" y="112.0" width="27.6" height="73" fill="#b0b0b0" rx="1"></rect><text x="632.5" y="152.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">30</text><text x="632.5" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">17/mai</text><rect x="657.0" y="400.0" width="27.6" height="34" fill="#e8a951" rx="1"></rect><text x="670.8" y="421.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">14</text><rect x="657.0" y="366.0" width="27.6" height="34" fill="#d97b72" rx="1"></rect><text x="670.8" y="387.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">14</text><rect x="657.0" y="224.0" width="27.6" height="142" fill="#7aaac8" rx="1"></rect><text x="670.8" y="299.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">58</text><rect x="657.0" y="136.0" width="27.6" height="88" fill="#b0b0b0" rx="1"></rect><text x="670.8" y="184.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">36</text><text x="670.8" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">18/mai</text><rect x="695.4" y="410.0" width="27.6" height="24" fill="#e8a951" rx="1"></rect><text x="709.2" y="426.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">9</text><rect x="695.4" y="386.0" width="27.6" height="24" fill="#d97b72" rx="1"></rect><text x="709.2" y="402.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">9</text><rect x="695.4" y="264.0" width="27.6" height="122" fill="#7aaac8" rx="1"></rect><text x="709.2" y="329.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">50</text><rect x="695.4" y="181.0" width="27.6" height="83" fill="#b0b0b0" rx="1"></rect><text x="709.2" y="226.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">34</text><text x="709.2" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">19/mai</text><rect x="733.7" y="373.0" width="27.6" height="61" fill="#e8a951" rx="1"></rect><text x="747.5" y="407.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">25</text><rect x="733.7" y="346.0" width="27.6" height="27" fill="#d97b72" rx="1"></rect><text x="747.5" y="363.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">11</text><rect x="733.7" y="224.0" width="27.6" height="122" fill="#7aaac8" rx="1"></rect><text x="747.5" y="289.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">50</text><rect x="733.7" y="155.0" width="27.6" height="69" fill="#b0b0b0" rx="1"></rect><text x="747.5" y="193.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">28</text><text x="747.5" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">20/mai</text><rect x="772.0" y="407.0" width="27.6" height="27" fill="#e8a951" rx="1"></rect><text x="785.8" y="424.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">11</text><rect x="772.0" y="380.0" width="27.6" height="27" fill="#d97b72" rx="1"></rect><text x="785.8" y="397.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">11</text><rect x="772.0" y="299.0" width="27.6" height="81" fill="#7aaac8" rx="1"></rect><text x="785.8" y="343.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">33</text><rect x="772.0" y="245.0" width="27.6" height="54" fill="#b0b0b0" rx="1"></rect><text x="785.8" y="276.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">22</text><text x="785.8" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">21/mai</text><rect x="810.4" y="407.0" width="27.6" height="27" fill="#e8a951" rx="1"></rect><text x="824.2" y="424.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">11</text><rect x="810.4" y="380.0" width="27.6" height="27" fill="#d97b72" rx="1"></rect><text x="824.2" y="397.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">11</text><rect x="810.4" y="314.0" width="27.6" height="66" fill="#7aaac8" rx="1"></rect><text x="824.2" y="351.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">27</text><rect x="810.4" y="248.0" width="27.6" height="66" fill="#b0b0b0" rx="1"></rect><text x="824.2" y="285.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">27</text><text x="824.2" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">22/mai</text><rect x="848.7" y="353.0" width="27.6" height="81" fill="#e8a951" rx="1"></rect><text x="862.5" y="397.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">33</text><rect x="848.7" y="329.0" width="27.6" height="24" fill="#d97b72" rx="1"></rect><text x="862.5" y="345.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">6</text><rect x="848.7" y="260.0" width="27.6" height="69" fill="#7aaac8" rx="1"></rect><text x="862.5" y="298.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">28</text><rect x="848.7" y="196.0" width="27.6" height="64" fill="#b0b0b0" rx="1"></rect><text x="862.5" y="232.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">26</text><text x="862.5" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">23/mai</text><rect x="887.0" y="321.0" width="27.6" height="113" fill="#e8a951" rx="1"></rect><text x="900.8" y="381.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">46</text><rect x="887.0" y="297.0" width="27.6" height="24" fill="#d97b72" rx="1"></rect><text x="900.8" y="313.0" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">8</text><rect x="887.0" y="228.0" width="27.6" height="69" fill="#7aaac8" rx="1"></rect><text x="900.8" y="266.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">28</text><rect x="887.0" y="167.0" width="27.6" height="61" fill="#b0b0b0" rx="1"></rect><text x="900.8" y="201.5" text-anchor="middle" font-size="11" fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">25</text><text x="900.8" y="455" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">24/mai</text></svg></div></div>
+  </div>
+
+  </div>
+
+  
+</div>
+
+
+<script>
+const ML=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+const SAVE_KEY='cx-dash-2026-v5';
+
+// ── SENHAS DE ACESSO ─────────────────────────────────────────────────────
+// Altere as senhas abaixo antes de distribuir o arquivo
+const ACCESS={
+  admin:    'cx2026admin',    // Acesso total: edição, todas as abas, download
+  t:        'HR7u17yb!',      // Tayna Moura — somente seus indicadores (leitura)
+  i:        '6hJp15AF@',    // Isabela Mesquita — somente seus indicadores (leitura)
+  g:        '2q2J5RJp#'     // Gabriel Henrique — somente seus indicadores (leitura)
+};
+const ROLE_NAMES={t:'Tayna Moura',i:'Isabela Mesquita',g:'Gabriel Henrique'};
+const SESSION_KEY='cx-session-2026';
+
+function n(v){return v!==null&&v!==undefined&&v!==''&&!isNaN(+v);}
+function st(v,meta,dir){
+  if(!n(v)||meta===null)return 'none';
+  const val=+v,m=+meta;
+  return dir==='max'?(val>=m?'ok':val>=m*.9?'warn':'bad'):(val<=m?'ok':val<=m*1.15?'warn':'bad');
+}
+function stLbl(s){return {ok:'✅ Acima',warn:'⚠️ Atenção',bad:'⚠️ Abaixo',none:'—'}[s];}
+function stClr(s){return {ok:'var(--green)',warn:'var(--amber)',bad:'var(--red)',none:'var(--muted)'}[s];}
+function latestFilled(arr){for(let i=arr.length-1;i>=0;i--)if(n(arr[i]))return{val:+arr[i],idx:i};return null;}
+
+function toast(msg,color){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.style.background=color||'var(--green)';
+  t.classList.add('show');clearTimeout(t._t);
+  t._t=setTimeout(()=>t.classList.remove('show'),2200);
+}
+
+
+const T_CSAT={meta:{csat:90,neutro:4,neg:6,txResp:25},rows:[
+  {solic:415,respostas:78,csat:91,neutro:3,neg:6},
+  {solic:424,respostas:74,csat:89,neutro:5,neg:5},
+  {solic:436,respostas:85,csat:89,neutro:4,neg:7},
+  {solic:186,respostas:38,csat:92,neutro:3,neg:5},
+  null,null,null,null,null,null,null,null]};
+const T_KPIS=[
+  {id:'tickets',label:'Total de Tickets',meta:null,metaVal:null,dir:'max',unit:'',data:[514,642,605,255,null,null,null,null,null,null,null,null]},
+  {id:'tma',label:'Tempo Médio 1ª Resposta',meta:'≤12 min',metaVal:12,dir:'min',unit:' min',data:[48,29,26,15,null,null,null,null,null,null,null,null]},
+  {id:'fcr',label:'Resolvidos no 1° Contato',meta:'≥50%',metaVal:50,dir:'max',unit:'%',data:[37,37.1,32.9,17.6,null,null,null,null,null,null,null,null]},
+  {id:'reab',label:'Tickets Reabertos',meta:'≤15%',metaVal:15,dir:'min',unit:'%',data:[23.3,23.3,21.4,17.2,null,null,null,null,null,null,null,null]},
+  {id:'slaWp',label:'SLA WhatsApp',meta:'≥60%',metaVal:60,dir:'max',unit:'%',data:[25,33,33,49,null,null,null,null,null,null,null,null]},
+  {id:'slaEmail',label:'SLA E-mail',meta:'≥95%',metaVal:95,dir:'max',unit:'%',data:[90,94,95,100,null,null,null,null,null,null,null,null]}];
+
+const I_CSAT={meta:{csat:90,neutro:4,neg:6,txResp:25},rows:[
+  {solic:446,respostas:58,csat:74,neutro:7,neg:19},
+  {solic:420,respostas:55,csat:71,neutro:8,neg:21},
+  {solic:462,respostas:79,csat:75,neutro:3,neg:23},
+  {solic:185,respostas:18,csat:78,neutro:6,neg:17},
+  null,null,null,null,null,null,null,null]};
+const I_KPIS=[
+  {id:'tickets',label:'Total de Tickets',meta:null,metaVal:null,dir:'max',unit:'',data:[520,510,558,230,null,null,null,null,null,null,null,null]},
+  {id:'tma',label:'Tempo Médio 1ª Resposta',meta:'≤12 min',metaVal:12,dir:'min',unit:' min',data:[50,32,10,6,null,null,null,null,null,null,null,null]},
+  {id:'fcr',label:'Resolvidos no 1° Contato',meta:'≥50%',metaVal:50,dir:'max',unit:'%',data:[35,38,34.5,43.5,null,null,null,null,null,null,null,null]},
+  {id:'reab',label:'Tickets Reabertos',meta:'≤15%',metaVal:15,dir:'min',unit:'%',data:[25,24,28.7,15.9,null,null,null,null,null,null,null,null]},
+  {id:'slaWp',label:'SLA WhatsApp',meta:'≥60%',metaVal:60,dir:'max',unit:'%',data:[29,47,65,60,null,null,null,null,null,null,null,null]},
+  {id:'slaEmail',label:'SLA E-mail',meta:'≥95%',metaVal:95,dir:'max',unit:'%',data:[86,97,99,98,null,null,null,null,null,null,null,null]}];
+
+const G_CSAT={meta:{csat:90,neutro:4,neg:6,txResp:25},rows:[
+  null,null,
+  {solic:68,respostas:10,csat:90,neutro:10,neg:0},
+  {solic:176,respostas:29,csat:79,neutro:3,neg:17},
+  null,null,null,null,null,null,null,null]};
+const G_KPIS=[
+  {id:'tickets',label:'Total de Tickets',meta:null,metaVal:null,dir:'max',unit:'',data:[null,null,93,233,null,null,null,null,null,null,null,null]},
+  {id:'tma',label:'Tempo Médio 1ª Resposta',meta:'≤12 min',metaVal:12,dir:'min',unit:' min',data:[null,null,54,28,null,null,null,null,null,null,null,null]},
+  {id:'fcr',label:'Resolvidos no 1° Contato',meta:'≥50%',metaVal:50,dir:'max',unit:'%',data:[null,null,29.2,27.6,null,null,null,null,null,null,null,null]},
+  {id:'reab',label:'Tickets Reabertos',meta:'≤15%',metaVal:15,dir:'min',unit:'%',data:[null,null,7.7,13.6,null,null,null,null,null,null,null,null]},
+  {id:'slaWp',label:'SLA WhatsApp',meta:'≥60%',metaVal:60,dir:'max',unit:'%',data:[null,null,null,26,null,null,null,null,null,null,null,null]},
+  {id:'slaEmail',label:'SLA E-mail',meta:'≥95%',metaVal:95,dir:'max',unit:'%',data:[null,null,null,89,null,null,null,null,null,null,null,null]}];
+
+
+// ── SAVE / RESTORE ────────────────────────────────
+let AREA_CSAT_OVERRIDE=Array(12).fill(null);
+
+function getData(){
+  return{tc:T_CSAT.rows,tk:T_KPIS.map(k=>k.data),ic:I_CSAT.rows,ik:I_KPIS.map(k=>k.data),gc:G_CSAT.rows,gk:G_KPIS.map(k=>k.data),ao:AREA_CSAT_OVERRIDE,
+    combo:JSON.parse(JSON.stringify(CHT_COMBO)),
+    backlog:JSON.parse(JSON.stringify(CHT_BACKLOG))};
+}
+function applyData(d){
+  if(d.tc)T_CSAT.rows=d.tc; if(d.tk)d.tk.forEach((v,i)=>T_KPIS[i]&&(T_KPIS[i].data=v));
+  if(d.ic)I_CSAT.rows=d.ic; if(d.ik)d.ik.forEach((v,i)=>I_KPIS[i]&&(I_KPIS[i].data=v));
+  if(d.gc)G_CSAT.rows=d.gc; if(d.gk)d.gk.forEach((v,i)=>G_KPIS[i]&&(G_KPIS[i].data=v));
+  if(d.ao)AREA_CSAT_OVERRIDE=d.ao;
+  if(d.combo)Object.keys(d.combo).forEach(function(k){if(CHT_COMBO[k]!==undefined)CHT_COMBO[k]=d.combo[k];});
+  if(d.backlog)Object.keys(d.backlog).forEach(function(k){if(CHT_BACKLOG[k]!==undefined)CHT_BACKLOG[k]=d.backlog[k];});
+  // Restore area override inputs
+  if(d.ao)d.ao.forEach((r,i)=>{
+    if(!r)return;
+    ['solic','respostas','csat','neutro','neg'].forEach(f=>{
+      const el=document.querySelector(`#area-csat-tbody tr:nth-child(${i+2}) input[onchange*="'${f}'"]`);
+      if(el&&r[f]!=null)el.value=r[f];
+    });
+  });
+}
+function saveData(name){
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify(getData()));}catch(e){}
+  downloadHTML(name||'cx');
+}
+
+// ── SALVAR COMO PDF ──────────────────────────────────
+function saveSectionAsPDF(panelId, filename) {
+  var renders = {
+    'tab-resumo':  function(cb){ renderResumo(); setTimeout(cb,450); },
+    'tab-tayna':   function(cb){ renderIndividualEvolution('t'); setTimeout(function(){ renderChart('cT_csat',T_CSAT.rows); setTimeout(cb,450); },80); },
+    'tab-isabela': function(cb){ renderIndividualEvolution('i'); setTimeout(function(){ renderChart('cI_csat',I_CSAT.rows); setTimeout(cb,450); },80); },
+    'tab-gabriel': function(cb){ renderIndividualEvolution('g'); setTimeout(function(){ renderChart('cG_csat',G_CSAT.rows); setTimeout(cb,450); },80); }
+  };
+
+  var renderFn = renders[panelId] || function(cb){ cb(); };
+  toast('🖨️ Abrindo impressão — selecione "Salvar como PDF"');
+
+  renderFn(function(){
+    var oldTitle = document.title;
+    document.title = (filename || 'Dashboard_CX_2026') + '.pdf';
+    document.body.setAttribute('data-print', panelId);
+
+    function restore(){
+      document.title = oldTitle;
+      document.body.removeAttribute('data-print');
+      window.removeEventListener('afterprint', restore);
+    }
+    window.addEventListener('afterprint', restore);
+
+    setTimeout(function(){ window.print(); }, 100);
+  });
+}
+
+
+// ── GITHUB INTEGRATION ───────────────────────────────
+var GH_CONFIG_KEY='cx_gh_config';
+function getGhConfig(){try{return JSON.parse(localStorage.getItem(GH_CONFIG_KEY)||'null');}catch(e){return null;}}
+function showGhConfig(){
+  var cfg=getGhConfig()||{};
+  document.getElementById('gh-token').value=cfg.token||'';
+  document.getElementById('gh-owner').value=cfg.owner||'sihnunes';
+  document.getElementById('gh-repo').value=cfg.repo||'dashboard';
+  document.getElementById('gh-path').value=cfg.path||'dashboard.html';
+  document.getElementById('gh-branch').value=cfg.branch||'main';
+  document.getElementById('gh-status').className='gh-status';
+  document.getElementById('gh-status').textContent='';
+  document.getElementById('gh-overlay').style.display='flex';
+}
+function closeGhConfig(){document.getElementById('gh-overlay').style.display='none';}
+function saveGhConfig(){
+  var cfg={
+    token:document.getElementById('gh-token').value.trim(),
+    owner:document.getElementById('gh-owner').value.trim(),
+    repo:document.getElementById('gh-repo').value.trim(),
+    path:document.getElementById('gh-path').value.trim(),
+    branch:document.getElementById('gh-branch').value.trim()||'main'
+  };
+  if(!cfg.token||!cfg.owner||!cfg.repo||!cfg.path){
+    var s=document.getElementById('gh-status');s.className='gh-status err';s.textContent='Preencha todos os campos obrigatórios.';return;
+  }
+  try{localStorage.setItem(GH_CONFIG_KEY,JSON.stringify(cfg));}catch(e){}
+  closeGhConfig();
+  toast('✅ Config GitHub salva!');
+}
+async function testGhConnection(){
+  var cfg={
+    token:document.getElementById('gh-token').value.trim(),
+    owner:document.getElementById('gh-owner').value.trim(),
+    repo:document.getElementById('gh-repo').value.trim(),
+    path:document.getElementById('gh-path').value.trim(),
+    branch:document.getElementById('gh-branch').value.trim()||'main'
+  };
+  var s=document.getElementById('gh-status');
+  s.className='gh-status';s.textContent='🔍 Testando conexão...';s.style.display='block';
+  try{
+    var r=await fetch('https://api.github.com/repos/'+cfg.owner+'/'+cfg.repo+'/contents/'+cfg.path+'?ref='+cfg.branch,
+      {headers:{'Authorization':'token '+cfg.token,'Accept':'application/vnd.github.v3+json'}});
+    if(r.status===200){s.className='gh-status ok';s.textContent='✅ Conexão OK! Arquivo encontrado no repositório.';}
+    else if(r.status===401){s.className='gh-status err';s.textContent='❌ Token inválido ou sem permissão.';}
+    else if(r.status===404){s.className='gh-status err';s.textContent='❌ Arquivo ou repositório não encontrado. Verifique owner/repo/path.';}
+    else{s.className='gh-status err';s.textContent='❌ Erro '+r.status+'. Verifique os dados.';}
+  }catch(e){s.className='gh-status err';s.textContent='❌ Erro de rede: '+e.message;}
+}
+function buildUpdatedHTML(){
+  refreshAll();
+  syncInputAttrs();
+  var src=document.documentElement.outerHTML;
+  ['cA_csat:90','cT_csat:100','cI_csat:100','cG_csat:100'].forEach(function(x){
+    var s=x.split(':');src=src.replace(new RegExp('<canvas id="'+s[0]+'"[^>]*>','g'),'<canvas id="'+s[0]+'" height="'+s[1]+'">');
+  });
+  var newSnap='(function(){window.__snap='+JSON.stringify(getData())+';})()'
+  var ms=src.indexOf('id="cx-snap"');
+  if(ms>=0){var ce=src.indexOf('>',ms)+1;var te=src.indexOf('<',ce);src=src.slice(0,ce)+newSnap+src.slice(te);}
+  return src;
+}
+async function pushToGitHub(src,cfg){
+  var apiBase='https://api.github.com/repos/'+cfg.owner+'/'+cfg.repo+'/contents/'+cfg.path;
+  var getR=await fetch(apiBase+'?ref='+cfg.branch,
+    {headers:{'Authorization':'token '+cfg.token,'Accept':'application/vnd.github.v3+json'}});
+  if(!getR.ok)throw new Error('Erro ao buscar arquivo ('+getR.status+'). Verifique as configurações.');
+  var fileData=await getR.json();
+  // Encode to base64 preserving UTF-8
+  var bytes=new TextEncoder().encode(src);
+  var bin='';bytes.forEach(function(b){bin+=String.fromCharCode(b);});
+  var b64=btoa(bin);
+  var putR=await fetch(apiBase,{
+    method:'PUT',
+    headers:{'Authorization':'token '+cfg.token,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},
+    body:JSON.stringify({message:'Dashboard CX: atualização de dados',content:b64,sha:fileData.sha,branch:cfg.branch})
+  });
+  if(!putR.ok){var err=await putR.json();throw new Error(err.message||'Erro ao publicar ('+putR.status+')');}
+}
+function saveAndRefresh(){
+  var cfg=getGhConfig();
+  if(!cfg||!cfg.token){
+    // Sem config: abre o modal de configuração
+    showGhConfig();
+    toast('⚙️ Configure o GitHub antes de salvar');
+    return;
+  }
+  try{localStorage.setItem(SAVE_KEY,JSON.stringify(getData()));}catch(e){}
+  toast('⏳ Publicando no GitHub...');
+  var src=buildUpdatedHTML();
+  pushToGitHub(src,cfg).then(function(){
+    toast('✅ Publicado no GitHub! Analistas já podem atualizar.');
+  }).catch(function(err){
+    console.error(err);
+    toast('❌ '+err.message);
+  });
+}
+function restoreData(){
+  try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return false;applyData(JSON.parse(raw));return true;}
+  catch(e){return false;}
+}
+
+// ── SYNC INPUT VALUE ATTRS (para outerHTML capturar dados corretos) ──
+function syncInputAttrs(){
+  // Parse onchange attr directly — no CSS selector quoting issues
+  document.querySelectorAll('input[onchange^="onCsatChange"]').forEach(function(inp){
+    var m=inp.getAttribute('onchange').match(/onCsatChange\('([^']+)',(\d+),'([^']+)'/);
+    if(!m)return;
+    var map={'t-csat-tbody':T_CSAT.rows,'i-csat-tbody':I_CSAT.rows,'g-csat-tbody':G_CSAT.rows};
+    var rows=map[m[1]],idx=+m[2],field=m[3];
+    inp.setAttribute('value',(rows&&rows[idx]&&rows[idx][field]!=null)?rows[idx][field]:'');
+  });
+  document.querySelectorAll('input[onchange^="onKpiChange"]').forEach(function(inp){
+    var m=inp.getAttribute('onchange').match(/onKpiChange\('([^']+)',(\d+),(\d+)/);
+    if(!m)return;
+    var map={'t-kpi-tbody':T_KPIS,'i-kpi-tbody':I_KPIS,'g-kpi-tbody':G_KPIS};
+    var kpis=map[m[1]];var ki=+m[2];var mi=+m[3];
+    inp.setAttribute('value',(kpis&&kpis[ki]&&kpis[ki].data[mi]!=null)?kpis[ki].data[mi]:'');
+  });
+}
+
+// ── DOWNLOAD COMPLETO ─────────────────────────────────
+function downloadHTML(name){
+  name=name||'cx';
+  syncInputAttrs();
+  var src=document.documentElement.outerHTML;
+  ['cA_csat:90','cT_csat:100','cI_csat:100','cG_csat:100'].forEach(function(x){
+    var s=x.split(':');src=src.replace(new RegExp('<canvas id="'+s[0]+'"[^>]*>','g'),'<canvas id="'+s[0]+'" height="'+s[1]+'">');
+  });
+  // indexOf-based snap replace — no regex, no script-close issues
+  var newSnap='(function(){window.__snap='+JSON.stringify(getData())+';})()'
+  var ms=src.indexOf('id="cx-snap"');
+  if(ms>=0){var ce=src.indexOf('>',ms)+1;var te=src.indexOf('<',ce);src=src.slice(0,ce)+newSnap+src.slice(te);}
+  var blob=new Blob([src],{type:'text/html;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='dashboard_'+name+'.html';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
+  toast('\uD83D\uDCBE Salvo!');
+}
+
+// ── CHART INSTANCES ──────────────────────────────────
+const _charts={};
+Chart.register(ChartDataLabels);
+function renderChart(canvasId,rows){
+  const ctx=document.getElementById(canvasId);
+  if(!ctx)return;
+  if(_charts[canvasId]){_charts[canvasId].destroy();delete _charts[canvasId];}
+  const vals=rows.map(r=>r&&n(r.csat)?+r.csat:null);
+  const txVals=rows.map(r=>r&&n(r.solic)&&+r.solic>0?Math.round(+r.respostas/+r.solic*100):null);
+  const bg=vals.map(v=>v===null?'transparent':v>=90?'#2f7a3b33':'#c0392b33');
+  const bd=vals.map(v=>v===null?'transparent':v>=90?'#2f7a3b':'#c0392b');
+  _charts[canvasId]=new Chart(ctx,{
+    type:'bar',
+    data:{labels:ML,datasets:[
+      {type:'bar',label:'CSAT %',data:vals,backgroundColor:bg,borderColor:bd,borderWidth:1.5,borderRadius:3,order:2},
+      {type:'line',label:'Tx. Resposta',data:txVals,borderColor:'#b86c1a',backgroundColor:'transparent',borderWidth:2,pointRadius:4,pointBackgroundColor:'#b86c1a',tension:.3,order:1,datalabels:{display:false}},
+      {type:'line',label:'Meta CSAT 90%',data:Array(12).fill(90),borderColor:'rgba(47,122,59,.5)',borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0,datalabels:{display:false}},
+      {type:'line',label:'Meta Tx. 25%',data:Array(12).fill(25),borderColor:'rgba(184,108,26,.5)',borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false,tension:0,datalabels:{display:false}}
+    ]},
+    options:{responsive:true,maintainAspectRatio:true,
+      plugins:{
+        legend:{display:false},
+        datalabels:{
+          display:(c)=>c.datasetIndex===0&&c.parsed&&c.parsed.y!=null,
+          anchor:'center',
+          align:'center',
+          clamp:true,
+          clip:false,
+          color:'#7a776f',
+          font:{weight:'700',size:11,family:"'DM Sans',sans-serif"},
+          formatter:(v)=>v!=null?v+'%':''
+        }
+      },
+      scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%'},grid:{color:'#f0ede6'}},x:{grid:{display:false}}}
+    }
+  });
+}
+
+// ── AREA OVERRIDE HANDLER ─────────────────────────────
+function onAreaCsatOverride(idx,field,val){
+  if(!AREA_CSAT_OVERRIDE[idx])AREA_CSAT_OVERRIDE[idx]={solic:null,respostas:null,csat:null,neutro:null,neg:null};
+  AREA_CSAT_OVERRIDE[idx][field]=val===''?null:+val;
+  const r=AREA_CSAT_OVERRIDE[idx];
+  if(!n(r.solic)&&!n(r.respostas)&&!n(r.csat)&&!n(r.neutro)&&!n(r.neg))AREA_CSAT_OVERRIDE[idx]=null;
+  const ar=computeAreaCsat();
+  renderTxStatus('area',ar);
+  renderCsatSummary(null,'area-csat-kpis',ar,'area-csat-tag');
+  renderChart('cA_csat',ar);
+  buildAreaCsatLancarTable();
+}
+
+// ── AREA AGGREGATION ──────────────────────────────────
+function computeAreaCsat(){
+  return Array.from({length:12},(_,i)=>{
+    // Use manual override if CSAT is filled
+    const ov=AREA_CSAT_OVERRIDE[i];
+    if(ov&&n(ov.csat))return ov;
+    // Fall back to T+I+G — média simples dos percentuais (igual ao Zendesk)
+    const parts=[T_CSAT.rows[i],I_CSAT.rows[i],G_CSAT.rows[i]].filter(r=>r&&n(r.csat));
+    if(!parts.length)return null;
+    const solic=parts.reduce((a,r)=>a+(+r.solic),0);
+    const resp=parts.reduce((a,r)=>a+(+r.respostas),0);
+    if(!resp)return{solic,respostas:resp,csat:null,neutro:null,neg:null};
+    // Média ponderada por volume de respostas (alinhada com Zendesk/plataforma)
+    const avgCsat  = Math.round(parts.reduce((a,r)=>a+(+r.csat  *(+r.respostas)),0)/resp*10)/10;
+    const avgNeutro= Math.round(parts.reduce((a,r)=>a+(+r.neutro*(+r.respostas)),0)/resp*10)/10;
+    const avgNeg   = Math.round(parts.reduce((a,r)=>a+(+r.neg   *(+r.respostas)),0)/resp*10)/10;
+    return{solic,respostas:resp,csat:avgCsat,neutro:avgNeutro,neg:avgNeg};
+  });
+}
+function computeAreaKpis(){
+  return T_KPIS.map((k,ki)=>{
+    const vals=Array.from({length:12},(_,mi)=>{
+      const td=T_KPIS[ki].data[mi],id=I_KPIS[ki].data[mi],gd=G_KPIS[ki].data[mi];
+      const parts=[[td,T_KPIS[0].data[mi]],[id,I_KPIS[0].data[mi]],[gd,G_KPIS[0].data[mi]]].filter(p=>n(p[0]));
+      if(!parts.length)return null;
+      if(ki===0)return parts.reduce((a,p)=>a+(+p[0]),0);
+      const totalT=parts.filter(p=>n(p[1])).reduce((a,p)=>a+(+p[1]),0);
+      if(!totalT)return parts.reduce((a,p)=>a+(+p[0]),0)/parts.length;
+      return Math.round(parts.filter(p=>n(p[1])).reduce((a,p)=>a+(+p[0])*(+p[1]),0)/totalT*10)/10;
+    });
+    return{...k,data:vals};
+  });
+}
+
+// ── KPI CARDS ─────────────────────────────────────────
+function fmt(v,unit){if(!n(v))return '—';const x=+v;return(x%1===0?x:x.toFixed(1).replace('.',','))+unit;}
+function renderKpiCards(elId,KPIS,tagId){
+  const el=document.getElementById(elId);if(!el)return;
+  const latest=KPIS.map(k=>latestFilled(k.data));
+  const latestIdx=latest.reduce((a,x)=>x?Math.max(a,x.idx):a,-1);
+  if(tagId&&latestIdx>=0){const t=document.getElementById(tagId);if(t)t.textContent=ML[latestIdx]+'/26';}
+  el.innerHTML=KPIS.map((k,i)=>{
+    const lf=latest[i];
+    if(!lf)return`<div class="kpi-card none"><div class="kpi-label">${k.label}</div><div class="kpi-val none">—</div><div class="kpi-sub">Volume </div></div>`;
+    const s=st(lf.val,k.metaVal,k.dir);
+    const sub=k.meta?`${k.meta} <span class="kbadge ${s}">${stLbl(s)}</span>`:'Volume ';
+    return`<div class="kpi-card ${s}"><div class="kpi-label">${k.label}</div><div class="kpi-val ${s}">${fmt(lf.val,k.unit)}</div><div class="kpi-sub">${sub}</div></div>`;
+  }).join('');
+}
+
+// ── COMBINED MÊS ATUAL (CSAT + OPS) ──────────────────
+function renderKpiMesAtual(elId, CSAT_DATA, KPIS, tagId) {
+  const el = document.getElementById(elId); if (!el) return;
+  const csatFilled = CSAT_DATA.rows.filter(r => r && n(r.csat));
+  const latestIdx = CSAT_DATA.rows.reduce((a,r,i) => r && n(r.csat) ? i : a, -1);
+  if (tagId && latestIdx >= 0) { const t = document.getElementById(tagId); if(t) t.textContent = ML[latestIdx]+'/26'; }
+  const mo = latestIdx >= 0 ? ML[latestIdx]+'/26' : '—';
+  const lr = csatFilled.length ? csatFilled[csatFilled.length-1] : null;
+  const tx = lr && n(lr.solic) && +lr.solic > 0 ? Math.round(+lr.respostas / +lr.solic * 100) : null;
+  const latest = KPIS.map(k => latestFilled(k.data));
+  const card = (l,v,s,m) => `<div class="kpi-card ${s}"><div class="kpi-label">${l}</div><div class="kpi-val ${s}">${v}</div><div class="kpi-sub">${m}${s!=='none'?` <span class="kbadge ${s}">${stLbl(s)}</span>`:''}</div></div>`;
+  let html = ''; const metas = [];
+  const sC = lr && n(lr.csat) ? st(lr.csat,90,'max') : 'none';
+  if (sC !== 'none') metas.push(sC === 'ok');
+  html += card('CSAT · '+mo, lr && n(lr.csat) ? lr.csat+'%' : '—', sC, 'Meta ≥90%');
+  const sTx = st(tx,25,'max');
+  if (sTx !== 'none') metas.push(sTx === 'ok');
+  html += card('Tx. Resposta · '+mo, n(tx) ? tx+'%' : '—', sTx, 'Meta ≥25%');
+  KPIS.forEach((k,i) => {
+    if (k.id === 'tickets') return;
+    const lf = latest[i];
+    const s = lf ? st(lf.val, k.metaVal, k.dir) : 'none';
+    if (s !== 'none' && k.metaVal !== null) metas.push(s === 'ok');
+    html += card(k.label, lf ? fmt(lf.val, k.unit) : '—', s, k.meta||'Volume');
+  });
+  const cum = metas.filter(Boolean).length;
+  const sCum = metas.length > 0 ? (cum === metas.length ? 'ok' : cum > 0 ? 'warn' : 'bad') : 'none';
+  html += card('Metas Cumpridas', metas.length > 0 ? cum+' de '+metas.length : '—', sCum, 'Indicadores no mês');
+  el.innerHTML = html;
+}
+// ── COMBINED ACUMULADO YTD (CSAT + OPS) ──────────────
+function renderKpiYtdFull(elId, CSAT_DATA, KPIS) {
+  const el = document.getElementById(elId); if (!el) return;
+  const csatFilled = CSAT_DATA.rows.filter(r => r && n(r.csat));
+  const card = (l,v,s,m) => `<div class="kpi-card ${s}"><div class="kpi-label">${l}</div><div class="kpi-val ${s}">${v}</div><div class="kpi-sub">${m}${s!=='none'?` <span class="kbadge ${s}">${stLbl(s)}</span>`:''}</div></div>`;
+  let html = ''; const metas = [];
+  if (csatFilled.length) {
+    const ac = csatFilled.reduce((a,r) => a + +r.csat, 0) / csatFilled.length;
+    const s = st(ac,90,'max'); metas.push(s==='ok');
+    html += card('CSAT Médio (YTD)', ac.toFixed(1)+'%', s, 'Meta ≥90%');
+  } else { html += card('CSAT Médio (YTD)', '—', 'none', 'Meta ≥90%'); }
+  if (csatFilled.length) {
+    const ts = csatFilled.reduce((a,r) => a+(n(r.solic)?+r.solic:0),0);
+    const tr2 = csatFilled.reduce((a,r) => a+(n(r.respostas)?+r.respostas:0),0);
+    const tx2 = ts > 0 ? Math.round(tr2/ts*100) : null;
+    const s = st(tx2,25,'max'); metas.push(n(tx2) && s==='ok');
+    html += card('Tx. Resposta (YTD)', n(tx2)?tx2+'%':'—', s, 'Meta ≥25%');
+  } else { html += card('Tx. Resposta (YTD)', '—', 'none', 'Meta ≥25%'); }
+  KPIS.forEach(k => {
+    if (k.id === 'tickets') return;
+    const filled = k.data.filter(v => n(v));
+    if (!filled.length) { html += card(k.label+' (YTD)', '—', 'none', k.meta||''); return; }
+    const avg = filled.reduce((a,v) => a + +v, 0) / filled.length;
+    const s = st(avg, k.metaVal, k.dir); metas.push(s==='ok');
+    html += card(k.label+' (YTD)', fmt(avg, k.unit), s, k.meta||'');
+  });
+  const cum = metas.filter(Boolean).length;
+  const sCum = cum === metas.length && metas.length > 0 ? 'ok' : cum > 0 ? 'warn' : 'bad';
+  html += card('Metas Cumpridas', cum+' de '+metas.length, sCum, 'Indicadores na média YTD');
+  el.innerHTML = html;
+}
+// ── BUILD AREA CSAT LANCAR TABLE ──────────────────────
+function buildAreaCsatLancarTable(){
+  var dst=document.getElementById('area-csat-tbody-lancar');if(!dst)return;
+  var ar=computeAreaCsat();
+  var Q="'";
+  var html='<tr class="mrow"><td class="tl">🔴 Meta</td><td class="tv">—</td><td class="tv">—</td>';
+  html+='<td class="tv" style="color:var(--amber);font-weight:700">≥25%</td>';
+  html+='<td class="tv" style="color:var(--green);font-weight:700">≥90%</td>';
+  html+='<td class="tv" style="color:var(--amber);font-weight:700">≤4%</td>';
+  html+='<td class="tv" style="color:var(--red);font-weight:700">≤6%</td><td></td></tr>';
+  ML.forEach(function(m,i){
+    var ov=AREA_CSAT_OVERRIDE[i];
+    var r=ar[i];
+    var tx=r&&n(r.solic)&&+r.solic>0?Math.round(+r.respostas/+r.solic*100):null;
+    var txClr=n(tx)?(st(tx,25,'max')==='ok'?'var(--green)':st(tx,25,'max')==='warn'?'var(--amber)':'var(--red)'):'var(--muted)';
+    var sC=r&&n(r.csat)?st(r.csat,90,'max'):'none';
+    var badge=sC!=='none'?'<span class="sb '+sC+'">'+(sC==='ok'?'✅ Acima':'⚠️ Atenção')+'</span>':'<span class="sb none">—</span>';
+    function inp(field,step,val){
+      return '<td class="ec"><input class="ci" type="number" step="'+step+'" value="'+(val!=null&&val!==''?val:'')+'" placeholder="—" onchange="onAreaCsatOverride('+i+','+Q+field+Q+',this.value)"></td>';
+    }
+    html+='<tr><td class="tl">'+m+'</td>';
+    html+=inp('solic','1',ov&&n(ov.solic)?ov.solic:'');
+    html+=inp('respostas','1',ov&&n(ov.respostas)?ov.respostas:'');
+    html+='<td class="tv" style="color:'+txClr+'">'+(n(tx)?tx+'%':'—')+'</td>';
+    html+=inp('csat','0.1',ov&&n(ov.csat)?ov.csat:'');
+    html+=inp('neutro','0.1',ov&&n(ov.neutro)?ov.neutro:'');
+    html+=inp('neg','0.1',ov&&n(ov.neg)?ov.neg:'');
+    html+='<td class="tds">'+badge+'</td></tr>';
+  });
+  dst.innerHTML=html;
+}
+
+// ── CSAT SUMMARY CARDS ────────────────────────────────
+function renderCsatSummary(mesId,ytdId,rows,periodId){
+  const filled=rows.filter(r=>r&&n(r.csat));
+  const latestIdx=rows.reduce((a,r,i)=>r&&n(r.csat)?i:a,-1);
+  if(periodId&&latestIdx>=0){const t=document.getElementById(periodId);if(t)t.textContent=ML[latestIdx]+'/26';}
+  const lr=filled.length?filled[filled.length-1]:null;
+  if(mesId&&lr){
+    const el=document.getElementById(mesId);if(!el)return;
+    const tx=n(lr.solic)&&+lr.solic>0?Math.round(+lr.respostas/+lr.solic*100):null;
+    const mo=ML[latestIdx]+'/26';
+    el.innerHTML=[
+      {l:'CSAT · '+mo,v:n(lr.csat)?lr.csat+'%':'—',s:st(lr.csat,90,'max'),m:'Meta ≥90%'},
+      {l:'Negativo · '+mo,v:n(lr.neg)?lr.neg+'%':'—',s:st(lr.neg,6,'min'),m:'Meta ≤6%'},
+      {l:'Neutro · '+mo,v:n(lr.neutro)?lr.neutro+'%':'—',s:st(lr.neutro,4,'min'),m:'Meta ≤4%'},
+      {l:'Tx. Resp. · '+mo,v:n(tx)?tx+'%':'—',s:st(tx,25,'max'),m:'Meta ≥25%'}
+    ].map(c=>`<div class="kpi-card ${c.s}"><div class="kpi-label">${c.l}</div><div class="kpi-val ${c.s}">${c.v}</div><div class="kpi-sub">${c.m} <span class="kbadge ${c.s}">${stLbl(c.s)}</span></div></div>`).join('');
+  }
+  if(ytdId&&filled.length){
+    const el=document.getElementById(ytdId);if(!el)return;
+    const ts=filled.reduce((a,r)=>a+(n(r.solic)?+r.solic:0),0);
+    const tr2=filled.reduce((a,r)=>a+(n(r.respostas)?+r.respostas:0),0);
+    // Usa o mês mais recente para o card CSAT (alinhado com Zendesk)
+    const lr2=filled[filled.length-1];
+    const ac=+lr2.csat;
+    const an=filled.reduce((a,r)=>a+(+r.neg),0)/filled.length;
+    const ant=filled.reduce((a,r)=>a+(+r.neutro),0)/filled.length;
+    const tx2=ts>0?Math.round(tr2/ts*100):null;
+    const sC=st(ac,90,'max'),sN=st(an,6,'min'),sNt=st(ant,4,'min'),sTx=st(tx2,25,'max');
+    el.innerHTML=`<div class="kpi-card ${sC}"><div class="kpi-label">CSAT Médio (YTD)</div><div class="kpi-val ${sC}">${ac.toFixed(1)}%</div><div class="kpi-sub">≥90% <span class="kbadge ${sC}">${stLbl(sC)}</span></div></div>
+<div class="kpi-card ${sN}"><div class="kpi-label">Negativo Médio</div><div class="kpi-val ${sN}">${an.toFixed(1)}%</div><div class="kpi-sub">≤6% <span class="kbadge ${sN}">${stLbl(sN)}</span></div></div>
+<div class="kpi-card ${sNt}"><div class="kpi-label">Neutro Médio</div><div class="kpi-val ${sNt}">${ant.toFixed(1)}%</div><div class="kpi-sub">≤4% <span class="kbadge ${sNt}">${stLbl(sNt)}</span></div></div>
+<div class="kpi-card ${sTx}"><div class="kpi-label">Tx. Resposta (YTD)</div><div class="kpi-val ${sTx}">${n(tx2)?tx2+'%':'—'}</div><div class="kpi-sub">≥25% <span class="kbadge ${sTx}">${stLbl(sTx)}</span></div></div>
+<div class="kpi-card none"><div class="kpi-label">Total Solicitações</div><div class="kpi-val none">${ts.toLocaleString('pt-BR')}</div><div class="kpi-sub">Acumulado </div></div>
+<div class="kpi-card none"><div class="kpi-label">Total Respostas</div><div class="kpi-val none">${tr2.toLocaleString('pt-BR')}</div><div class="kpi-sub">Acumulado </div></div>`;
+  }
+}
+
+// ── TX + STATUS COLUMNS ───────────────────────────────
+function renderTxStatus(prefix,rows){
+  for(let i=0;i<12;i++){
+    const r=rows[i];
+    const txEl=document.getElementById(prefix+'-tx-'+i);
+    const rstEl=document.getElementById(prefix+'-rst-'+i);
+    if(txEl){
+      if(r&&n(r.solic)&&+r.solic>0){const tx=Math.round(+r.respostas/+r.solic*100);const s=st(tx,25,'max');txEl.innerHTML=`<span class="${s==='ok'?'vok':s==='bad'?'vbad':'vwarn'}">${tx}%</span>`;}
+      else txEl.innerHTML='<span style="color:var(--muted)">—</span>';
+    }
+    if(rstEl){
+      if(r&&n(r.csat)){const s=st(r.csat,90,'max');rstEl.className='sb '+s;rstEl.textContent=stLbl(s);}
+      else{rstEl.className='sb none';rstEl.textContent='—';}
+    }
+  }
+}
+
+// ── STARS ─────────────────────────────────────────────
+function renderStars(elId,rows){
+  const el=document.getElementById(elId);if(!el)return;
+  const filled=rows.filter(r=>r&&n(r.csat));if(!filled.length)return;
+  const avg=filled.reduce((a,r)=>a+(+r.csat),0)/filled.length;
+  const stars=Math.min(5,Math.max(0,(avg-60)/8));
+  let h='';
+  for(let i=1;i<=5;i++){
+    if(stars>=i)h+=`<span style="color:#e8a951">★</span>`;
+    else if(stars>i-1){const p=Math.round((stars-(i-1))*100);h+=`<span style="display:inline-block;position:relative;color:#e6e3db">★<span style="position:absolute;left:0;top:0;width:${p}%;overflow:hidden;color:#e8a951">★</span></span>`;}
+    else h+=`<span style="color:#e6e3db">★</span>`;
+  }
+  el.innerHTML=h;
+}
+
+// ── KPI ACHIEVEMENT COLUMN ────────────────────────────
+function renderKpiAchievement(tbodyId,KPIS){
+  const tbody=document.getElementById(tbodyId);if(!tbody)return;
+  tbody.querySelectorAll('tr').forEach((tr,ki)=>{
+    if(ki>=KPIS.length)return;
+    const k=KPIS[ki];const cells=tr.querySelectorAll('td');const ac=cells[cells.length-1];if(!ac)return;
+    const filled=k.data.filter(v=>n(v));
+    if(!filled.length||k.metaVal===null){ac.innerHTML='<span style="display:inline-flex;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700;color:var(--muted);background:#f0ede8">—</span>';return;}
+    const met=filled.filter(v=>st(v,k.metaVal,k.dir)==='ok').length;
+    const pct=Math.round(met/filled.length*100);
+    const s=pct>=75?'ok':pct>=50?'warn':'bad';
+    const clr={ok:'color:var(--green);background:var(--gbg)',warn:'color:var(--amber);background:var(--ambg)',bad:'color:var(--red);background:var(--rbg)'};
+    ac.innerHTML=`<span style="display:inline-flex;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700;${clr[s]}">${pct}%</span>`;
+  });
+}
+
+// ── AREA KPI TABLE ─────────────────────────────────────
+function renderAreaKpiTable(){
+  const aK=computeAreaKpis();
+  const tbody=document.getElementById('area-kpi-tbody');if(!tbody)return;
+  tbody.querySelectorAll('tr').forEach((tr,ki)=>{
+    if(ki>=T_KPIS.length)return;
+    const k=T_KPIS[ki];const data=aK[ki]?aK[ki].data:[];
+    const cells=tr.querySelectorAll('td');
+    for(let mi=0;mi<12;mi++){
+      const cell=cells[mi+1];if(!cell)continue;
+      const v=data[mi];
+      if(!n(v)){cell.textContent='—';cell.className='tv';cell.style.color='var(--muted)';continue;}
+      const s=st(v,k.metaVal,k.dir);cell.className='tv';cell.style.color=stClr(s);cell.textContent=fmt(v,k.unit);
+    }
+    const ac=cells[cells.length-1];if(!ac)return;
+    const filled=data.filter(v=>n(v));
+    if(!filled.length||k.metaVal===null){ac.innerHTML='<span style="display:inline-flex;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700;color:var(--muted);background:#f0ede8">—</span>';return;}
+    const met=filled.filter(v=>st(v,k.metaVal,k.dir)==='ok').length;
+    const pct=Math.round(met/filled.length*100);
+    const s=pct>=75?'ok':pct>=50?'warn':'bad';
+    const clr={ok:'color:var(--green);background:var(--gbg)',warn:'color:var(--amber);background:var(--ambg)',bad:'color:var(--red);background:var(--rbg)'};
+    ac.innerHTML=`<span style="display:inline-flex;padding:3px 8px;border-radius:20px;font-size:11px;font-weight:700;${clr[s]}">${pct}%</span>`;
+  });
+}
+
+// ── ON CHANGE ─────────────────────────────────────────
+function onCsatChange(tbodyId,idx,field,val){
+  const map={
+    't-csat-tbody':{DATA:T_CSAT,pre:'t',color:'#2f7a3b',chart:'cT_csat'},
+    'i-csat-tbody':{DATA:I_CSAT,pre:'i',color:'#5570a0',chart:'cI_csat'},
+    'g-csat-tbody':{DATA:G_CSAT,pre:'g',color:'#8b4513',chart:'cG_csat'}
+  };
+  const ctx=map[tbodyId];if(!ctx)return;
+  if(!ctx.DATA.rows[idx])ctx.DATA.rows[idx]={solic:null,respostas:null,csat:null,neutro:null,neg:null};
+  ctx.DATA.rows[idx][field]=val===''?null:+val;
+  // Recolor the input itself (skip META row)
+  const tb=document.getElementById(tbodyId);
+  if(tb){const trs=Array.from(tb.querySelectorAll('tr')).filter(tr=>!tr.classList.contains('mrow'));if(trs[idx]){const inp=trs[idx].querySelector(`input[onchange*="'${field}'"]`);if(inp)inp.style.color=csatInpClr(field,val===''?null:+val);}}
+  renderTxStatus(ctx.pre,ctx.DATA.rows);
+  renderChart(ctx.chart,ctx.DATA.rows);
+  const KPIS_MAP_CSC = {t:T_KPIS,i:I_KPIS,g:G_KPIS};
+  renderKpiMesAtual(ctx.pre+'-mes-kpis',ctx.DATA,KPIS_MAP_CSC[ctx.pre],ctx.pre+'-period-tag');
+  renderKpiYtdFull(ctx.pre+'-ytd-kpis',ctx.DATA,KPIS_MAP_CSC[ctx.pre]);
+  renderStars(ctx.pre+'-stars',ctx.DATA.rows);
+  const ar=computeAreaCsat();renderTxStatus('area',ar);
+  renderCsatSummary(null,'area-csat-kpis',ar,'area-csat-tag');
+  renderChart('cA_csat',ar);
+  buildAreaCsatLancarTable();
+}
+function onKpiChange(tbodyId,kpiIdx,colIdx,val){
+  const map={
+    't-kpi-tbody':{KPIS:T_KPIS,pre:'t'},
+    'i-kpi-tbody':{KPIS:I_KPIS,pre:'i'},
+    'g-kpi-tbody':{KPIS:G_KPIS,pre:'g'}
+  };
+  const ctx=map[tbodyId];if(!ctx)return;
+  ctx.KPIS[kpiIdx].data[colIdx]=val===''?null:+val;
+  // Recolor the input itself
+  const tb=document.getElementById(tbodyId);
+  if(tb){const rows=tb.querySelectorAll('tr');if(rows[kpiIdx]){const inps=rows[kpiIdx].querySelectorAll('input.ci');if(inps[colIdx]){const k=ctx.KPIS[kpiIdx];const v=val===''?null:+val;inps[colIdx].style.color=n(v)?(k.metaVal!==null?stClr(st(v,k.metaVal,k.dir)):'var(--text)'):'var(--muted)';}}}
+  renderKpiCards(ctx.pre+'-kpis',ctx.KPIS,ctx.pre+'-period-tag');
+  const CSAT_MAP_KC={t:T_CSAT,i:I_CSAT,g:G_CSAT};
+  renderKpiMesAtual(ctx.pre+'-mes-kpis',CSAT_MAP_KC[ctx.pre],ctx.KPIS,ctx.pre+'-period-tag');
+  renderKpiYtdFull(ctx.pre+'-ytd-kpis',CSAT_MAP_KC[ctx.pre],ctx.KPIS);
+  renderKpiAchievement(tbodyId,ctx.KPIS);
+  const aK=computeAreaKpis();renderKpiCards('area-kpis',aK,'area-kpi-tag');
+  renderAreaKpiTable();
+}
+
+// ── REFRESH ALL ───────────────────────────────────────
+function refreshAll(){
+  // Tayna
+  renderKpiMesAtual('t-mes-kpis',T_CSAT,T_KPIS,'t-period-tag');
+  renderKpiYtdFull('t-ytd-kpis',T_CSAT,T_KPIS);
+  renderTxStatus('t',T_CSAT.rows);renderStars('t-stars',T_CSAT.rows);
+  renderKpiAchievement('t-kpi-tbody',T_KPIS);
+  // Isabela
+  renderKpiMesAtual('i-mes-kpis',I_CSAT,I_KPIS,'i-period-tag');
+  renderKpiYtdFull('i-ytd-kpis',I_CSAT,I_KPIS);
+  renderTxStatus('i',I_CSAT.rows);renderStars('i-stars',I_CSAT.rows);
+  renderKpiAchievement('i-kpi-tbody',I_KPIS);
+  // Gabriel
+  renderKpiMesAtual('g-mes-kpis',G_CSAT,G_KPIS,'g-period-tag');
+  renderKpiYtdFull('g-ytd-kpis',G_CSAT,G_KPIS);
+  renderTxStatus('g',G_CSAT.rows);renderStars('g-stars',G_CSAT.rows);
+  renderKpiAchievement('g-kpi-tbody',G_KPIS);
+  // Area
+  const aK=computeAreaKpis();renderKpiCards('area-kpis',aK,'area-kpi-tag');
+  renderAreaKpiTable();
+  if(document.getElementById('tab-resumo')&&document.getElementById('tab-resumo').classList.contains('active'))renderResumo();
+  if(document.getElementById('tab-tayna')&&document.getElementById('tab-tayna').classList.contains('active'))renderIndividualEvolution('t');
+  if(document.getElementById('tab-isabela')&&document.getElementById('tab-isabela').classList.contains('active'))renderIndividualEvolution('i');
+  if(document.getElementById('tab-gabriel')&&document.getElementById('tab-gabriel').classList.contains('active'))renderIndividualEvolution('g');
+  if(document.getElementById('tab-tayna')&&document.getElementById('tab-tayna').classList.contains('active'))renderIndividualEvolution('t');
+  if(document.getElementById('tab-isabela')&&document.getElementById('tab-isabela').classList.contains('active'))renderIndividualEvolution('i');
+  if(document.getElementById('tab-gabriel')&&document.getElementById('tab-gabriel').classList.contains('active'))renderIndividualEvolution('g');
+  const ar=computeAreaCsat();
+  renderCsatSummary(null,'area-csat-kpis',ar,'area-csat-tag');
+  renderTxStatus('area',ar);
+  buildAreaCsatLancarTable();
+  // Charts: only render active tab to avoid canvas=0 issues
+  const active=document.querySelector('.panel.active');
+  if(active){
+    const id=active.id;
+    if(id==='tab-area')renderChart('cA_csat',ar);
+    else if(id==='tab-tayna')renderChart('cT_csat',T_CSAT.rows);
+    else if(id==='tab-isabela')renderChart('cI_csat',I_CSAT.rows);
+    else if(id==='tab-gabriel')renderChart('cG_csat',G_CSAT.rows);
+  }
+}
+
+// ── SHOW TAB ──────────────────────────────────────────
+function showTab(tabName,el){
+  if(tabName==='resumo')setTimeout(renderResumo,100);
+  if(tabName==='lancar'){setTimeout(function(){buildAreaCsatLancarTable();restoreLancInputs();},30);}
+  if(tabName==='tayna')setTimeout(function(){renderIndividualEvolution('t');},30);
+  if(tabName==='isabela')setTimeout(function(){renderIndividualEvolution('i');},30);
+  if(tabName==='gabriel')setTimeout(function(){renderIndividualEvolution('g');},30);
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  const panel=document.getElementById('tab-'+tabName);
+  if(panel)panel.classList.add('active');
+  if(el)el.classList.add('active');
+  setTimeout(()=>{
+    const ar=computeAreaCsat();
+    if(tabName==='area')renderChart('cA_csat',ar);
+    else if(tabName==='tayna')renderChart('cT_csat',T_CSAT.rows);
+    else if(tabName==='isabela')renderChart('cI_csat',I_CSAT.rows);
+    else if(tabName==='gabriel')renderChart('cG_csat',G_CSAT.rows);
+    // Render new charts for the active tab
+    var keyMap = {resumo:'resumo',tayna:'t',isabela:'i',gabriel:'g'};
+    var k = keyMap[tabName];
+    if (k) { renderComboSVG(k); renderBacklogSVG(k); }
+  },80);
+}
+
+// ── DOWNLOAD ALL INDIVIDUALS ──────────────────────────
+function downloadAll(){
+  var order=['t','i','g'];
+  var names={t:'Tayna',i:'Isabela',g:'Gabriel'};
+  var idx=0;
+  function next(){
+    if(idx>=order.length){setTimeout(function(){toast('✅ 3 arquivos baixados!');},300);return;}
+    var p=order[idx];idx++;
+    toast('⏳ Gerando dashboard_'+names[p].toLowerCase()+'.html...');
+    setTimeout(function(){downloadPersonHTML(p);setTimeout(next,1200);},200);
+  }
+  next();
+}
+
+// ── INDIVIDUAL PERSON DOWNLOAD ──────────────────────────────────────────
+function downloadPersonHTML(pre){
+  var NM={t:'tayna',i:'isabela',g:'gabriel'};
+  var FN={t:'Tayna Moura',i:'Isabela Mesquita',g:'Gabriel Henrique'};
+  var nm=NM[pre],fn=FN[pre];
+  var cid='c'+pre.toUpperCase()+'_csat';
+  var ctb=pre+'-csat-tbody',ktb=pre+'-kpi-tbody';
+  var CV=pre==='t'?'T_CSAT':pre==='i'?'I_CSAT':'G_CSAT';
+  var KV=pre==='t'?'T_KPIS':pre==='i'?'I_KPIS':'G_KPIS';
+  var CR=pre==='t'?T_CSAT.rows:pre==='i'?I_CSAT.rows:G_CSAT.rows;
+  var KS=pre==='t'?T_KPIS:pre==='i'?I_KPIS:G_KPIS;
+  var rk=pre+'c',kk=pre+'k';
+
+  // 1. Snap com apenas os dados desta pessoa
+  var pd={};pd[rk]=CR;pd[kk]=KS.map(function(k){return k.data;});
+
+  // 2. HTML base com canvases e snap corrigidos
+  syncInputAttrs();
+  var src=document.documentElement.outerHTML;
+  ['cA_csat:90','cT_csat:100','cI_csat:100','cG_csat:100'].forEach(function(x){
+    var p2=x.split(':'),cid2=p2[0],h=p2[1];
+    src=src.replace(new RegExp('<canvas id="'+cid2+'"[^>]*>','g'),'<canvas id="'+cid2+'" height="'+h+'">');
+  });
+  var itag='<scr'+'ipt id="cx-snap">(function(){window.__snap='+JSON.stringify(pd)+';})()</sc'+'ript>';
+  src=src.replace(new RegExp('<scr'+'ipt id="cx-snap">[\\s\\S]*?</sc'+'ript>'),itag);
+
+  // 3. Sincroniza values dos inputs no HTML
+  function pInput(sig,val){
+    var esc=sig.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+    src=src.replace(new RegExp('(<input[^>]+'+esc+'[^>]*?)value="[^"]*"'),'$1value="'+val+'"');
+    src=src.replace(new RegExp('(<input[^>]+value=")[^"]*("[^>]+'+esc+')'),'$1'+val+'$2');
+  }
+  CR.forEach(function(r,idx){
+    if(!r)return;
+    ['solic','respostas','csat','neutro','neg'].forEach(function(f){
+      if(!n(r[f]))return;
+      pInput('onchange="onCsatChange(\''+ctb+'\','+idx+',\''+f+'\',this.value)"',r[f]);
+    });
+  });
+  KS.forEach(function(k,ki){
+    k.data.forEach(function(v,ci){
+      if(!n(v))return;
+      pInput('onchange="onKpiChange(\''+ktb+'\','+ki+','+ci+',this.value)"',v);
+    });
+  });
+
+  // 4. Manipulação DOM via DOMParser — remove painéis e estruturas desnecessárias
+  var parser=new DOMParser();
+  var doc2=parser.parseFromString(src,'text/html');
+  doc2.title='Dashboard CX \xB7 '+fn+' \xB7 2026';
+  var ht=doc2.querySelector('.htitle');if(ht)ht.textContent='CX Analytics \xB7 '+fn;
+  var hs=doc2.querySelector('.hsub');if(hs)hs.textContent='Meus Indicadores \xB7 '+fn+' \xB7 2026';
+
+  // Remove barra de abas
+  var nav=doc2.querySelector('nav.tabs');if(nav)nav.remove();
+
+  // Mantém apenas o painel desta pessoa, remove os demais
+  doc2.querySelectorAll('.panel').forEach(function(p){
+    if(p.id!=='tab-'+pre)p.remove();
+    else p.classList.add('active');
+  });
+
+  // Remove botões: Salvar (saveAndRefresh), Baixar todos, Baixar individual
+  doc2.querySelectorAll('button').forEach(function(b){
+    var oc=b.getAttribute('onclick')||'';
+    if(oc.indexOf('saveAndRefresh')>=0||oc.indexOf('downloadAll')>=0||oc.indexOf('downloadPersonHTML')>=0)b.remove();
+  });
+
+  // Renomeia botão de salvar para contexto individual
+  var hb=doc2.querySelector('button[onclick*="saveData"]');
+  if(hb){hb.setAttribute('onclick','saveData()');hb.innerHTML='\uD83D\uDCBE Salvar meus dados';}
+
+  // Info bar: remove fundo amarelo e atualiza texto
+  var infoBar=doc2.querySelector('header span[style*="--yc"]');
+  if(infoBar){infoBar.style.background='var(--s2)';infoBar.textContent='\uD83D\uDCCA Visualiza\u00e7\u00e3o individual \xB7 apenas seus dados';}
+
+  // Células editáveis → somente leitura (fundo cinza)
+  doc2.querySelectorAll('td.ec').forEach(function(td){td.style.background='var(--s2)';});
+  doc2.querySelectorAll('input.ci').forEach(function(inp){inp.style.background='var(--s2)';inp.style.pointerEvents='none';});
+
+  // 5. Script de override injetado no body — sobrescreve init/refreshAll/saveData/showTab
+  var ov=[
+    // showTab sempre ativa o painel desta pessoa (bloqueia o showTab original)
+    'function showTab(){',
+      'document.querySelectorAll(".panel").forEach(function(p){p.classList.remove("active");});',
+      'var p=document.getElementById("tab-'+pre+'");if(p)p.classList.add("active");',
+    '}',
+    'function refreshAll(){',
+      'renderKpiCards("'+pre+'-kpis",'+KV+',"'+pre+'-period-tag");',
+      'renderCsatSummary("'+pre+'-csat-mes-kpis","'+pre+'-csat-kpis",'+CV+'.rows,"'+pre+'-period-tag");',
+      'renderTxStatus("'+pre+'",'+CV+'.rows);',
+      'renderStars("'+pre+'-stars",'+CV+'.rows);',
+      'renderKpiAchievement("'+pre+'-kpi-tbody",'+KV+');',
+    '}',
+    'function saveData(){',
+      'var d2={};d2["'+rk+'"]='+CV+'.rows;d2["'+kk+'"]='+KV+'.map(function(k){return k.data;});',
+      'try{localStorage.setItem(SAVE_KEY,JSON.stringify(d2));}catch(e){}',
+      'var it2=\'<scr\'+\'ipt id="cx-snap">(function(){window.__snap=\'+JSON.stringify(d2)+\';})()</sc\'+\'ript>\';',
+      'var s2=document.documentElement.outerHTML;',
+      's2=s2.replace(/<canvas id="'+cid+'"[^>]*>/g,\'<canvas id="'+cid+'" height="100">\');',
+      's2=s2.replace(new RegExp(\'<scr\'+\'ipt id="cx-snap">[\\\\s\\\\S]*?</sc\'+\'ript>\'),it2);',
+      'var bl=new Blob([s2],{type:"text/html;charset=utf-8"});',
+      'var a=document.createElement("a");a.href=URL.createObjectURL(bl);',
+      'a.download="dashboard_'+nm+'.html";',
+      'document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);',
+      'toast("\uD83D\uDCBE dashboard_'+nm+'.html salvo!");',
+    '}',
+    'function init(){',
+      'if(window.__snap)applyData(window.__snap);',
+      // Ativa o painel imediatamente
+      'var panel=document.getElementById("tab-'+pre+'");if(panel)panel.classList.add("active");',
+      'refreshAll();restoreInputs();',
+      // Re-ativa após 150ms para garantir que sobrescreve qualquer showTab do init original
+      'setTimeout(function(){',
+        'var p2=document.getElementById("tab-'+pre+'");if(p2)p2.classList.add("active");',
+        'renderChart("'+cid+'",'+CV+'.rows);',
+      '},150);',
+    '}',
+    'window.addEventListener("DOMContentLoaded",init);'
+  ].join('\n');
+  var os=doc2.createElement('script');
+  os.textContent=ov;
+  doc2.body.appendChild(os);
+
+  // 6. Download do arquivo individual
+  var finalH='<!DOCTYPE html>\n'+doc2.documentElement.outerHTML;
+  var blob=new Blob([finalH],{type:'text/html;charset=utf-8'});
+  var a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='dashboard_'+nm+'.html';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(a.href);
+  toast('\uD83D\uDCBE dashboard_'+nm+'.html baixado!');
+}
+
+
+function csatInpClr(field,val){
+  // Returns color string based on field meta: green=ok, red=bad, text=neutral
+  if(!n(val))return'var(--muted)';
+  const v=+val;
+  if(field==='csat')return v>=90?'var(--green)':'var(--red)';
+  if(field==='neutro')return v<=4?'var(--green)':'var(--red)';
+  if(field==='neg')return v<=6?'var(--green)':'var(--red)';
+  return'var(--text)';
+}
+
+function restoreInputs(){
+  // Sync all input DOM values from JS data arrays + apply meta coloring
+  // NOTE: skip the first tr (META row with class mrow)
+  [[T_CSAT.rows,'t-csat-tbody'],[I_CSAT.rows,'i-csat-tbody'],[G_CSAT.rows,'g-csat-tbody']].forEach(([rows,tbId])=>{
+    const tb=document.getElementById(tbId);if(!tb)return;
+    const fields=['solic','respostas','csat','neutro','neg'];
+    const trs=Array.from(tb.querySelectorAll('tr')).filter(tr=>!tr.classList.contains('mrow'));
+    trs.forEach((tr,i)=>{
+      if(!rows[i])return;
+      fields.forEach(f=>{
+        const inp=tr.querySelector(`input[onchange*="'${f}'"]`);
+        if(inp){
+          const v=rows[i][f];
+          inp.value=n(v)?v:'';
+          inp.style.color=csatInpClr(f,v);
+        }
+      });
+    });
+  });
+  [[T_KPIS,'t-kpi-tbody'],[I_KPIS,'i-kpi-tbody'],[G_KPIS,'g-kpi-tbody']].forEach(([KPIS,tbId])=>{
+    const tb=document.getElementById(tbId);if(!tb)return;
+    tb.querySelectorAll('tr').forEach((tr,ki)=>{
+      if(ki>=KPIS.length)return;
+      tr.querySelectorAll('input.ci').forEach((inp,mi)=>{
+        const v=KPIS[ki].data[mi];
+        inp.value=n(v)?v:'';
+        inp.style.color=n(v)?(KPIS[ki].metaVal!==null?stClr(st(v,KPIS[ki].metaVal,KPIS[ki].dir)):'var(--text)'):'var(--muted)';
+      });
+    });
+  });
+}
+
+// ── LOGIN / CONTROLE DE ACESSO ────────────────────────
+function doLogin(){
+  var pw=(document.getElementById('cx-pw').value||'').trim();
+  var role=null;
+  for(var k in ACCESS){if(ACCESS[k]===pw){role=k;break;}}
+  if(!role){
+    document.getElementById('cx-err').style.display='block';
+    document.getElementById('cx-pw').value='';
+    document.getElementById('cx-pw').focus();
+    return;
+  }
+  document.getElementById('cx-err').style.display='none';
+  applyRole(role);
+}
+
+function applyRole(role){
+  document.getElementById('cx-login').style.display='none';
+  document.getElementById('cx-logout').style.display='';
+
+  if(role==='admin'){
+    // Acesso total — renderiza tudo e ativa aba Área
+    refreshAll();
+    restoreInputs();
+    // Mostra botão de config GitHub
+    var ghBtn=document.getElementById('btn-gh-config');if(ghBtn)ghBtn.style.display='';
+    // Ativa painel e aba diretamente, sem dependência de querySelector
+    document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active');});
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+    var ap=document.getElementById('tab-resumo');if(ap)ap.classList.add('active');
+    document.querySelectorAll('.tab').forEach(function(t){
+      if((t.getAttribute('onclick')||'').indexOf("'resumo'")>=0)t.classList.add('active');
+    });
+    setTimeout(function(){renderResumo();},80);
+    return;
+  }
+
+  // ── Modo analista ──────────────────────────────────
+  var cv=role==='t'?T_CSAT.rows:role==='i'?I_CSAT.rows:G_CSAT.rows;
+  var kv=role==='t'?T_KPIS:role==='i'?I_KPIS:G_KPIS;
+  var tabName={t:'tayna',i:'isabela',g:'gabriel'}[role];
+
+  // 1. Ativa o painel correto ANTES de renderizar
+  var nav=document.querySelector('nav.tabs');if(nav)nav.style.display='none';
+  document.querySelectorAll('.panel').forEach(function(p){
+    p.classList.remove('active');
+    if(p.id==='tab-'+tabName)p.classList.add('active');
+  });
+
+  // 2. Usa refreshAll (mesmo que admin) para garantir todos os dados atualizados
+  refreshAll();
+  restoreInputs();
+  restoreLancInputs();
+
+  // 3. Header
+  var hs=document.querySelector('.hsub');
+  if(hs)hs.textContent='Meus Indicadores \xB7 '+ROLE_NAMES[role]+' \xB7 2026';
+  var bar=document.querySelector('header span[style*="--yc"]');
+  if(bar){bar.style.background='var(--s2)';bar.textContent='\uD83D\uDCCA Visualiza\u00e7\u00e3o individual \xB7 apenas seus dados';}
+
+  // 4. Esconde botões de admin
+  ['saveAndRefresh','downloadAll','saveData','downloadPersonHTML'].forEach(function(fn){
+    document.querySelectorAll('button[onclick*="'+fn+'"]').forEach(function(b){b.style.display='none';});
+  });
+
+  // 5. Esconde botões de edição dos gráficos (combo + backlog)
+  document.querySelectorAll('.chart-table-toggle').forEach(function(b){b.style.display='none';});
+  document.querySelectorAll('.chart-table-wrap').forEach(function(w){w.style.display='none';});
+
+  // 6. Células somente leitura
+  document.querySelectorAll('td.ec').forEach(function(td){td.style.background='var(--s2)';});
+  document.querySelectorAll('input.ci').forEach(function(inp){
+    inp.style.background='var(--s2)';inp.style.pointerEvents='none';inp.setAttribute('readonly','');
+  });
+}
+
+function doLogout(){
+  location.reload();
+}
+
+
+// ── ACOMPANHAMENTO ANUAL ─────────────────────────────────────────
+function rBadge(s,lbl_override){
+  var map={ok:'background:var(--gbg);color:var(--green)',warn:'background:var(--ambg);color:var(--amber)',bad:'background:var(--rbg);color:var(--red)',none:'background:#f0ede8;color:var(--muted)'};
+  var lbl=lbl_override||{ok:'✅ Na meta',warn:'⚠️ Atenção',bad:'❌ Fora da meta',none:'—'}[s];
+  return '<span style="display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:9px;font-weight:700;white-space:nowrap;'+map[s]+'">'+lbl+'</span>';
+}
+function rDot(s){
+  var c={ok:'var(--green)',warn:'var(--amber)',bad:'var(--red)',none:'var(--muted)'};
+  return '<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:'+c[s]+';flex-shrink:0"></span>';
+}
+function overallStatus(arr){
+  if(arr.every(function(s){return s==='none';}))return 'none';
+  var valid=arr.filter(function(s){return s!=='none';});
+  if(valid.includes('bad'))return 'bad';
+  if(valid.includes('warn'))return 'warn';
+  return 'ok';
+}
+
+function renderResumoCharts(months,aK,lastIdx){
+  if(!window._rcCharts)window._rcCharts={};
+  var mLbl=ML.slice();
+
+  // ── helpers ──
+  function destroyMake(key,id,cfg){
+    if(window._rcCharts[key])window._rcCharts[key].destroy();
+    var el=document.getElementById(id);
+    if(el){window._rcCharts[key]=new Chart(el,cfg);}
+  }
+  function barColors(vals,meta,dir){
+    return vals.map(function(v){
+      if(v===null)return 'rgba(0,0,0,0)';
+      var ok=(dir==='min'?v<=meta:v>=meta);
+      return ok?'rgba(47,122,59,.28)':'rgba(192,57,43,.22)';
+    });
+  }
+  function barBorders(vals,meta,dir){
+    return vals.map(function(v){
+      if(v===null)return 'rgba(0,0,0,0)';
+      var ok=(dir==='min'?v<=meta:v>=meta);
+      return ok?'#2f7a3b':'#c0392b';
+    });
+  }
+  function miniKpiChart(key,id,vals,meta,dir,unit,lineColor,metaColor){
+    var bg=barColors(vals,meta,dir);
+    var bd=barBorders(vals,meta,dir);
+    destroyMake(key,id,{type:'bar',data:{labels:mLbl,datasets:[
+      {type:'bar',data:vals,backgroundColor:bg,borderColor:bd,borderWidth:1.5,borderRadius:3,order:2,
+        datalabels:{display:function(ctx){return ctx.parsed&&ctx.parsed.y!=null&&ctx.parsed.y!==0;},
+          anchor:'end',align:'end',color:'#555',font:{weight:'700',size:9},
+          formatter:function(v){return v!=null?v+(unit||''):''}}},
+      {type:'line',data:Array(12).fill(meta),borderColor:metaColor||'rgba(100,100,100,.4)',
+        borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false,datalabels:{display:false}}
+    ]},options:{responsive:true,maintainAspectRatio:true,
+      plugins:{legend:{display:false},datalabels:{display:false}},
+      scales:{y:{ticks:{callback:function(v){return v+(unit||'');},font:{size:9}},grid:{color:'#f0ede6'},
+        suggestedMin:0,suggestedMax:dir==='min'?meta*2.5:100},
+        x:{grid:{display:false},ticks:{font:{size:9}}}}
+    }});
+  }
+
+  // ── Chart 1 — CSAT + Tx Resp ──
+  var csatV=mLbl.map(function(_,i){var m=months[i];return(m&&m.has)?+m.r.csat:null;});
+  var txV  =mLbl.map(function(_,i){var m=months[i];return(m&&m.has&&n(m.tx))?+m.tx:null;});
+  var csatBg=barColors(csatV,90,'max');
+  var csatBd=barBorders(csatV,90,'max');
+  // YTD badge
+  var filled2=months.filter(function(m){return m.has;});
+  if(filled2.length){
+    var ytdC=filled2.reduce(function(a,m){return a+(+m.r.csat);},0)/filled2.length;
+    var badge=document.getElementById('rc-csat-ytd-badge');
+    if(badge){badge.textContent='YTD '+ytdC.toFixed(1)+'%';badge.style.color=ytdC>=90?'var(--green)':'var(--red)';}
+  }
+  destroyMake('ct','rc_csat_tx',{type:'bar',data:{labels:mLbl,datasets:[
+    {type:'bar',data:csatV,backgroundColor:csatBg,borderColor:csatBd,borderWidth:1.5,borderRadius:3,order:2,
+      datalabels:{display:function(ctx){return ctx.parsed&&ctx.parsed.y!=null&&ctx.parsed.y!==0;},
+        anchor:'center',align:'center',color:'#444',font:{weight:'700',size:11},
+        formatter:function(v){return v!=null?v+'%':''}}},
+    {type:'line',data:txV,borderColor:'#b86c1a',backgroundColor:'transparent',borderWidth:2,
+      pointRadius:4,pointBackgroundColor:'#b86c1a',tension:.3,order:1,datalabels:{display:false}},
+    {type:'line',data:Array(12).fill(90),borderColor:'rgba(47,122,59,.5)',borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false,datalabels:{display:false}},
+    {type:'line',data:Array(12).fill(25),borderColor:'rgba(184,108,26,.5)',borderDash:[5,4],borderWidth:1.5,pointRadius:0,fill:false,datalabels:{display:false}}
+  ]},options:{responsive:true,maintainAspectRatio:true,
+    plugins:{legend:{display:false},datalabels:{display:false}},
+    scales:{y:{min:0,max:100,ticks:{callback:function(v){return v+'%';},font:{size:10}},grid:{color:'#f0ede6'}},
+      x:{grid:{display:false},ticks:{font:{size:10}}}}
+  }});
+
+  // ── Semáforo card ──
+  var sl=document.getElementById('rc-semaforo-list');
+  if(sl&&lastIdx>=0){
+    var clrOf2={ok:'var(--green)',warn:'var(--amber)',bad:'var(--red)',none:'var(--muted)'};
+    var bgOf2 ={ok:'var(--gbg)',  warn:'var(--ambg)', bad:'var(--rbg)', none:'#f0ede8'};
+    var lblOf2={ok:'Na meta','warn':'Atenção',bad:'Fora da meta',none:'—'};
+    var semItems=[
+      {label:'CSAT',    val:filled2.length?+(filled2.reduce(function(a,m){return a+(+m.r.csat);},0)/filled2.length).toFixed(1):null, meta:90, dir:'max', unit:'%'},
+      {label:'TMA',     val:aK[1]?+(aK[1].data.filter(function(v){return v!=null;}).reduce(function(a,v,i,arr){return a+v/arr.length;},0)).toFixed(1):null, meta:12, dir:'min', unit:' min'},
+      {label:'FCR',     val:aK[2]?+(aK[2].data.filter(function(v){return v!=null;}).reduce(function(a,v,i,arr){return a+v/arr.length;},0)).toFixed(1):null, meta:50, dir:'max', unit:'%'},
+      {label:'Reabertos',val:aK[3]?+(aK[3].data.filter(function(v){return v!=null;}).reduce(function(a,v,i,arr){return a+v/arr.length;},0)).toFixed(1):null, meta:15, dir:'min', unit:'%'},
+      {label:'SLA WP',  val:aK[4]?+(aK[4].data.filter(function(v){return v!=null;}).reduce(function(a,v,i,arr){return a+v/arr.length;},0)).toFixed(1):null, meta:60, dir:'max', unit:'%'},
+      {label:'SLA E-mail',val:aK[5]?+(aK[5].data.filter(function(v){return v!=null;}).reduce(function(a,v,i,arr){return a+v/arr.length;},0)).toFixed(1):null, meta:95, dir:'max', unit:'%'}
+    ];
+    sl.innerHTML=semItems.map(function(item){
+      var s=item.val!=null?(item.dir==='min'?item.val<=item.meta:item.val>=item.meta)?'ok':'bad':'none';
+      var dot=s==='ok'?'#2f7a3b':s==='bad'?'#c0392b':'#9e9894';
+      var valStr=item.val!=null?(item.val+(item.unit||'')):'—';
+      return '<div style="display:flex;align-items:center;justify-content:space-between;background:'+bgOf2[s]+';border-radius:5px;padding:5px 9px">'+
+        '<div style="display:flex;align-items:center;gap:7px">'+
+          '<span style="width:8px;height:8px;border-radius:50%;background:'+dot+';flex-shrink:0;display:inline-block"></span>'+
+          '<span style="font-size:11px;font-weight:600;color:var(--text)">'+item.label+'</span>'+
+        '</div>'+
+        '<div style="display:flex;align-items:center;gap:7px">'+
+          '<span style="font-family:\'DM Serif Display\',serif;font-size:14px;color:'+dot+'">'+valStr+'</span>'+
+          '<span style="font-size:8px;font-weight:700;padding:2px 5px;border-radius:3px;background:'+dot+';color:#fff">'+
+            (s==='ok'?'✓ meta':s==='bad'?'↓ abaixo':'—')+
+          '</span>'+
+        '</div>'+
+      '</div>';
+    }).join('');
+  }
+
+}
+
+function renderResumo(){
+  var ar=computeAreaCsat();
+  var aK=computeAreaKpis();
+  renderKpiCards('resumo-area-kpis', aK, 'resumo-kpi-tag');
+
+  // ── CSAT Médio — prepended to KPIs Operacionais row ──
+  var kpiEl=document.getElementById('resumo-area-kpis');
+  if(kpiEl){
+    var liCSAT=-1;for(var i=0;i<12;i++){if(ar[i]&&n(ar[i].csat))liCSAT=i;}
+    var csatMesVal=liCSAT>=0?+ar[liCSAT].csat:null;
+    var sCSAT=n(csatMesVal)?st(csatMesVal,90,'max'):'none';
+    var csatMedCard='<div class="kpi-card '+sCSAT+'">'
+      +'<div class="kpi-label">CSAT</div>'
+      +'<div class="kpi-val '+sCSAT+'">'+(n(csatMesVal)?csatMesVal+'%':'—')+'</div>'
+      +'<div class="kpi-sub">≥90%'+(sCSAT!=='none'?' <span class="kbadge '+sCSAT+'">'+stLbl(sCSAT)+'</span>':'')+'</div>'
+      +'</div>';
+    var firstCard=kpiEl.querySelector('.kpi-card');
+    if(firstCard)firstCard.insertAdjacentHTML('afterend',csatMedCard);
+    else kpiEl.innerHTML=csatMedCard+kpiEl.innerHTML;
+  }
+
+  // ── Metas Cumpridas — Mês Atual (appended to resumo-area-kpis) ──
+  var kpiEl=document.getElementById('resumo-area-kpis');
+  if(kpiEl&&lastIdx>=0||(function(){var li=-1;for(var i=0;i<12;i++){if(ar[i]&&n(ar[i].csat))li=i;}return li;}())>=0){
+    var li=-1;for(var i=0;i<12;i++){if(ar[i]&&n(ar[i].csat))li=i;}
+    var mesAtualMetas=[];
+    // CSAT
+    var lrCsat=ar[li];
+    if(lrCsat&&n(lrCsat.csat)){var sC2=st(lrCsat.csat,90,'max');if(sC2!=='none')mesAtualMetas.push(sC2==='ok');}
+    // Tx resposta
+    var txM=lrCsat&&n(lrCsat.solic)&&+lrCsat.solic>0?Math.round(+lrCsat.respostas/+lrCsat.solic*100):null;
+    if(n(txM)){var sTxM=st(txM,25,'max');if(sTxM!=='none')mesAtualMetas.push(sTxM==='ok');}
+    // KPIs operacionais
+    aK.slice(1).forEach(function(k){
+      if(k.metaVal===null)return;
+      var v=li>=0?k.data[li]:null;
+      if(!n(v))return;
+      mesAtualMetas.push(st(v,k.metaVal,k.dir)==='ok');
+    });
+    if(kpiEl&&mesAtualMetas.length>0){
+      var cumM=mesAtualMetas.filter(Boolean).length;
+      var sCumM=cumM===mesAtualMetas.length?'ok':cumM>0?'warn':'bad';
+      var badge='<span class="kbadge '+sCumM+'">'+{ok:'✅ Acima',warn:'⚠️ Atenção',bad:'⚠️ Abaixo'}[sCumM]+'</span>';
+      kpiEl.innerHTML+=
+        '<div class="kpi-card '+sCumM+'">'+
+          '<div class="kpi-label">Metas Atingidas</div>'+
+          '<div class="kpi-val '+sCumM+'">'+cumM+' de '+mesAtualMetas.length+'</div>'+
+          '<div class="kpi-sub">Indicadores no mês '+badge+'</div>'+
+        '</div>';
+    }
+  }
+
+  renderCsatSummary(null, 'resumo-area-csat-kpis', ar, 'resumo-csat-tag');
+  var clrOf={ok:'var(--green)',warn:'var(--amber)',bad:'var(--red)',none:'var(--muted)'};
+  var bgOf ={ok:'var(--gbg)',  warn:'var(--ambg)', bad:'var(--rbg)', none:'#f0ede8'};
+  var icoOf={ok:'✅',warn:'⚠️',bad:'❌',none:'·'};
+  var lblOf={ok:'Na meta',warn:'Atenção',bad:'Fora da meta',none:'—'};
+
+  // last filled month
+  var lastIdx=-1;
+  for(var i=0;i<12;i++){if(ar[i]&&n(ar[i].csat))lastIdx=i;}
+
+  // per-month data
+  var months=[];
+  for(var i=0;i<12;i++){
+    var r=ar[i];
+    var hasCsat=r&&n(r.csat);
+    var tx=hasCsat&&n(r.solic)&&+r.solic>0?Math.round(+r.respostas/+r.solic*100):null;
+    var sC=hasCsat?st(r.csat,90,'max'):'none';
+    var sTx=n(tx)?st(tx,25,'max'):'none';
+    var kpiSt=[];
+    for(var ki=1;ki<aK.length;ki++){var v=aK[ki].data[i];kpiSt.push(n(v)?st(v,aK[ki].metaVal,aK[ki].dir):'none');}
+    var allSt=kpiSt.concat(sC!=='none'?[sC]:[]).concat(sTx!=='none'?[sTx]:[]);
+    months.push({i:i,has:hasCsat,r:r,tx:tx,sC:sC,sTx:sTx,kpiSt:kpiSt,overall:overallStatus(allSt)});
+  }
+
+  // ── ① YTD HERO CARDS ───────────────────────────────────
+  var heroTag=document.getElementById('resumo-ytd-hero-tag');
+  var hero=document.getElementById('resumo-hero');
+  if(hero){
+    var filled=months.filter(function(m){return m.has;});
+    if(!filled.length){
+      hero.innerHTML='<div style="background:var(--surface);padding:20px;color:var(--muted);font-size:11px;grid-column:1/-1">Nenhum dado disponível</div>';
+    } else {
+      // CSAT + Tx — acumulado do ano (média de todos os meses preenchidos)
+      var ytdCsatSum=0,ytdN=0,ytdSolic=0,ytdResp=0;
+      filled.forEach(function(m){ytdCsatSum+=+m.r.csat;ytdN++;ytdSolic+=(n(m.r.solic)?+m.r.solic:0);ytdResp+=(n(m.r.respostas)?+m.r.respostas:0);});
+      var avgCsat=ytdCsatSum/ytdN;
+      var txYtd=ytdSolic>0?Math.round(ytdResp/ytdSolic*100):null;
+      var sYtdC=st(avgCsat,90,'max');
+      var sYtdTx=n(txYtd)?st(txYtd,25,'max'):'none';
+
+      // KPI YTD averages (indices 1-5: tma,fcr,reab,slaWp,slaEmail)
+      var kpiDefs=aK.slice(1);
+      var kpiYtdVals=kpiDefs.map(function(k){
+        var sum2=0,cnt=0;
+        for(var mi=0;mi<=lastIdx;mi++){var v=k.data[mi];if(n(v)){sum2+=+v;cnt++;}}
+        return cnt>0?sum2/cnt:null;
+      });
+      var kpiYtdSt=kpiDefs.map(function(k,i){
+        var v=kpiYtdVals[i];return(n(v)&&k.metaVal!==null)?st(v,k.metaVal,k.dir):'none';
+      });
+
+      // KPIs na Meta: % de metas cumpridas (por indicador, não por avaliação)
+      // Para cada indicador com meta, verificar se a média YTD está na meta
+      var indicsMet=0,indicsTot=0;
+      // CSAT
+      indicsTot++;if(sYtdC==='ok')indicsMet++;
+      // Tx Resposta
+      indicsTot++;if(sYtdTx==='ok')indicsMet++;
+      // demais KPIs
+      kpiDefs.forEach(function(k,i){
+        if(k.metaVal===null)return;
+        var v=kpiYtdVals[i];
+        if(!n(v))return;
+        indicsTot++;
+        if(kpiYtdSt[i]==='ok')indicsMet++;
+      });
+      var kpiPct=indicsTot>0?Math.round(indicsMet/indicsTot*100):null;
+      var sKpi=n(kpiPct)?(kpiPct>=75?'ok':kpiPct>=50?'warn':'bad'):'none';
+
+      // Card builder — mesmo estilo dos .kpi-card do painel CSAT
+      function heroCard(lbl,val,sub,s){
+        var clr=clrOf[s];
+        var badge=s!=='none'?'<span class="kbadge '+s+'">'+lblOf[s]+'</span>':'';
+        return '<div class="kpi-card '+s+'" style="background:var(--surface);padding:16px 16px 13px;position:relative">'+
+          '<div class="kpi-label">'+lbl+'</div>'+
+          '<div class="kpi-val '+s+'" style="font-family:\'DM Serif Display\',serif;font-size:26px;line-height:1;margin-bottom:4px;display:inline-block">'+val+'</div>'+
+          '<div class="kpi-sub">'+sub+' '+badge+'</div>'+
+          '</div>';
+      }
+
+      var shortLabels=['TMA (YTD)','FCR (YTD)','Reabertos (YTD)','SLA WP (YTD)','SLA E-mail (YTD)'];
+      var subLabels=['Meta ≤12 min','Meta ≥50%','Meta ≤15%','Meta ≥60%','Meta ≥95%'];
+      var kpiCards='';
+      kpiDefs.forEach(function(k,i){
+        var v=kpiYtdVals[i];
+        kpiCards+=heroCard(shortLabels[i],n(v)?fmt(v,k.unit):'—',subLabels[i],kpiYtdSt[i]);
+      });
+
+      hero.innerHTML=
+        heroCard('CSAT Médio (YTD)',avgCsat.toFixed(1)+'%','Meta ≥90%',sYtdC)+
+        heroCard('Tx. Resposta (YTD)',(n(txYtd)?txYtd+'%':'—'),'Meta ≥25%',sYtdTx)+
+        kpiCards+
+        heroCard('Metas Cumpridas',(n(kpiPct)?kpiPct+'%':'—'),indicsMet+' de '+indicsTot+' indicadores na média YTD',sKpi);
+    }
+  }
+
+  // ── ② TABELA MENSAL COMPACTA ───────────────────────────
+  var tbody=document.getElementById('resumo-timeline-tbody');
+  if(tbody){
+    var thtml='';
+    months.forEach(function(m){
+      if(!m.has){return;}
+      var isLast=m.i===lastIdx;
+      function cell(v,s,unit){
+        var clr=clrOf[s]||'var(--muted)';
+        return '<td style="padding:14px 18px;text-align:left;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:'+clr+';font-family:\'DM Sans\',sans-serif">'+(n(v)?v+(unit||''):'—')+'</td>';
+      }
+      var kpis=aK.slice(1);
+      var rowBg=isLast?'background:#fafaf4;':'background:#fff;';
+      var rowBorder=isLast?'border-left:3px solid var(--green)':'border-left:3px solid transparent';
+      thtml+='<tr style="'+rowBg+rowBorder+'">'+
+        '<td style="padding:14px 10px 14px 20px;border-bottom:1px solid #f0ece4;font-size:14px;font-weight:700;color:var(--text);white-space:nowrap;font-family:\'DM Sans\',sans-serif">'+ML[m.i]+'</td>';
+      thtml+=cell(m.r.csat,m.sC,'%');
+      thtml+=cell(m.tx,m.sTx,'%');
+      for(var ki=0;ki<kpis.length;ki++){
+        var v2=kpis[ki].data[m.i];var s2=n(v2)?st(v2,kpis[ki].metaVal,kpis[ki].dir):'none';
+        thtml+=cell(n(v2)?v2:null,s2,kpis[ki].unit);
+      }
+      thtml+='</tr>';
+    });
+    tbody.innerHTML=thtml;
+  }
+  setTimeout(function(){renderResumoCharts(months,aK,lastIdx);},50);
+}
+
+
+// ── LANÇAR DADOS ──────────────────────────────────────────────────
+function updateLancTx(key,idx,row){
+  var cell=document.getElementById('lanc-'+key+'-tx-'+idx);
+  if(!cell)return;
+  var s=(row&&n(row.solic)&&+row.solic>0&&n(row.respostas))?Math.round(+row.respostas/+row.solic*100):null;
+  var ss=n(s)?st(s,25,'max'):'none';
+  var clrOf={ok:'var(--green)',warn:'var(--amber)',bad:'var(--red)',none:'var(--muted)'};
+  cell.textContent=n(s)?s+'%':'—';
+  cell.style.color=clrOf[ss];
+  cell.style.fontWeight=n(s)?'700':'400';
+}
+
+function onLancCsat(key,idx,field,val){
+  var DATA=key==='t'?T_CSAT:key==='i'?I_CSAT:G_CSAT;
+  if(!DATA.rows[idx])DATA.rows[idx]={solic:null,respostas:null,csat:null,neutro:null,neg:null};
+  DATA.rows[idx][field]=val===''?null:+val;
+  var tb=document.getElementById('lanc-'+key+'-csat');
+  if(tb){
+    var trs=Array.from(tb.querySelectorAll('tr')).filter(function(tr){return!tr.classList.contains('mrow');});
+    if(trs[idx]){var inp=trs[idx].querySelector('input[onchange*="\''+field+'\'"]');if(inp)inp.style.color=csatInpClr(field,val===''?null:+val);}
+  }
+  updateLancTx(key,idx,DATA.rows[idx]);
+  refreshAll();
+  if(document.getElementById('tab-resumo')&&document.getElementById('tab-resumo').classList.contains('active'))renderResumo();
+}
+
+function onLancKpi(key,kpiIdx,monthIdx,val){
+  var KPIS=key==='t'?T_KPIS:key==='i'?I_KPIS:G_KPIS;
+  KPIS[kpiIdx].data[monthIdx]=val===''?null:+val;
+  var tb=document.getElementById('lanc-'+key+'-kpi');
+  if(tb){
+    var trs=Array.from(tb.querySelectorAll('tr')).filter(function(tr){return!tr.classList.contains('mrow');});
+    if(trs[monthIdx]){
+      var inps=trs[monthIdx].querySelectorAll('input.ci');
+      if(inps[kpiIdx]){var k=KPIS[kpiIdx];var v=val===''?null:+val;inps[kpiIdx].style.color=n(v)?(k.metaVal!==null?stClr(st(v,k.metaVal,k.dir)):'var(--text)'):'var(--muted)';}
+    }
+  }
+  refreshAll();
+  if(document.getElementById('tab-resumo')&&document.getElementById('tab-resumo').classList.contains('active'))renderResumo();
+}
+
+
+function restoreLancInputs(){
+  // CSAT
+  [['t',T_CSAT.rows],['i',I_CSAT.rows],['g',G_CSAT.rows]].forEach(function(pair){
+    var key=pair[0],rows=pair[1];
+    var tb=document.getElementById('lanc-'+key+'-csat');if(!tb)return;
+    var trs=Array.from(tb.querySelectorAll('tr')).filter(function(tr){return!tr.classList.contains('mrow');});
+    var fields=['solic','respostas','csat','neutro','neg'];
+    trs.forEach(function(tr,idx){
+      var inps=tr.querySelectorAll('input.ci');
+      fields.forEach(function(f,fi){
+        var r=rows[idx];var v=r&&r[f]!=null?r[f]:'';
+        if(inps[fi]){inps[fi].value=v;inps[fi].style.color=n(v)?csatInpClr(f,+v):'var(--muted)';}
+      });
+      updateLancTx(key,idx,rows[idx]);
+    });
+  });
+  // KPIs
+  [['t',T_KPIS],['i',I_KPIS],['g',G_KPIS]].forEach(function(pair){
+    var key=pair[0],KPIS=pair[1];
+    var tb=document.getElementById('lanc-'+key+'-kpi');if(!tb)return;
+    var trs=Array.from(tb.querySelectorAll('tr')).filter(function(tr){return!tr.classList.contains('mrow');});
+    trs.forEach(function(tr,mi){
+      var inps=tr.querySelectorAll('input.ci');
+      KPIS.forEach(function(k,ki){
+        var v=k.data[mi];
+        if(inps[ki]){
+          inps[ki].value=v!=null?v:'';
+          inps[ki].style.color=n(v)?(k.metaVal!==null?stClr(st(v,k.metaVal,k.dir)):'var(--text)'):'var(--muted)';
+        }
+      });
+    });
+  });
+}
+
+
+// ── EVOLUÇÃO INDIVIDUAL NOS PAINÉIS ──────────────────────────────
+function renderIndividualEvolution(key){
+  var tbodyId='evo-'+key+'-tbody';
+  var tbody=document.getElementById(tbodyId);
+  if(!tbody)return;
+  var csatRows=key==='t'?T_CSAT.rows:key==='i'?I_CSAT.rows:G_CSAT.rows;
+  var KPIS    =key==='t'?T_KPIS:key==='i'?I_KPIS:G_KPIS;
+  var kpiDefs =KPIS.slice(1);
+  var clrOf   ={ok:'var(--green)',warn:'var(--amber)',bad:'var(--red)',none:'var(--muted)'};
+
+  // last filled month
+  var lastIdx=-1;
+  for(var i=0;i<12;i++){var r=csatRows[i];if(r&&n(r.csat))lastIdx=i;}
+
+  var html='<tr class="mrow">'+
+    '<td class="tl" style="font-size:9px;font-weight:700;color:var(--red)">Meta</td>'+
+    '<td class="tv" style="color:var(--green);font-size:10px;font-weight:700">≥90%</td>'+
+    '<td class="tv" style="color:var(--amber);font-size:10px;font-weight:700">≥25%</td>'+
+    '<td class="tv" style="color:var(--red);font-size:10px;font-weight:700">≤12m</td>'+
+    '<td class="tv" style="color:var(--red);font-size:10px;font-weight:700">≥50%</td>'+
+    '<td class="tv" style="color:var(--red);font-size:10px;font-weight:700">≤15%</td>'+
+    '<td class="tv" style="color:var(--amber);font-size:10px;font-weight:700">≥60%</td>'+
+    '<td class="tv" style="color:var(--green);font-size:10px;font-weight:700">≥95%</td>'+
+    '</tr>';
+
+  for(var i=0;i<12;i++){
+    var r=csatRows[i];
+    var hasCsat=r&&n(r.csat);
+    var hasAnyKpi=kpiDefs.some(function(k){return n(k.data[i]);});
+    if(!hasCsat&&!hasAnyKpi)continue;
+    var tx=hasCsat&&n(r.solic)&&+r.solic>0?Math.round(+r.respostas/+r.solic*100):null;
+    var sC=hasCsat?st(r.csat,90,'max'):'none';
+    var sTx=n(tx)?st(tx,25,'max'):'none';
+    var isLast=i===lastIdx;
+    function cell(v,s,unit){
+      return '<td class="tv" style="color:'+clrOf[s]+';font-weight:700;font-size:12px">'+(n(v)?v+(unit||''):'—')+'</td>';
+    }
+    html+='<tr style="'+(isLast?'background:#fafaf4;':'')+
+      'border-left:'+(isLast?'3px solid var(--green)':'3px solid transparent')+'">'+
+      '<td class="tl" style="font-size:11px;'+(isLast?'font-weight:700':'')+'">'+ML[i]+'</td>';
+    html+=cell(hasCsat?r.csat:null,sC,'%');
+    html+=cell(tx,sTx,'%');
+    for(var ki=0;ki<kpiDefs.length;ki++){
+      var v2=kpiDefs[ki].data[i];
+      var s2=n(v2)?st(v2,kpiDefs[ki].metaVal,kpiDefs[ki].dir):'none';
+      html+=cell(n(v2)?v2:null,s2,kpiDefs[ki].unit);
+    }
+    html+='</tr>';
+  }
+  tbody.innerHTML=html;
+}
+
+
+
+// ── COMBO + BACKLOG CHARTS ────────────────────────────────────────────────
+
+var COMBO_DEFAULT = [
+  {d:'Jan',tickets:514,tempo:48},
+  {d:'Fev',tickets:642,tempo:29},
+  {d:'Mar',tickets:605,tempo:26},
+  {d:'Abr',tickets:367,tempo:16},
+  {d:'Mai',tickets:138,tempo:20}
+];
+var BACKLOG_DEFAULT = [
+  {d:'01/mai',novo:37,cipv:9, pend:43,hold:42},
+  {d:'02/mai',novo:60,cipv:10,pend:43,hold:41},
+  {d:'03/mai',novo:86,cipv:0, pend:43,hold:41},
+  {d:'04/mai',novo:25,cipv:0, pend:83,hold:56},
+  {d:'05/mai',novo:21,cipv:0, pend:58,hold:52},
+  {d:'06/mai',novo:13,cipv:13,pend:46,hold:42},
+  {d:'07/mai',novo:11,cipv:11,pend:45,hold:40},
+  {d:'08/mai',novo:10,cipv:6, pend:49,hold:38},
+  {d:'09/mai',novo:41,cipv:9, pend:49,hold:38},
+  {d:'10/mai',novo:72,cipv:0, pend:48,hold:38},
+  {d:'11/mai',novo:11,cipv:11,pend:74,hold:43},
+  {d:'12/mai',novo:16,cipv:16,pend:56,hold:43},
+  {d:'13/mai',novo:12,cipv:12,pend:65,hold:43},
+  {d:'14/mai',novo:11,cipv:11,pend:37,hold:35},
+  {d:'15/mai',novo:6, cipv:6, pend:40,hold:31},
+  {d:'16/mai',novo:32,cipv:10,pend:40,hold:31},
+  {d:'17/mai',novo:49,cipv:14,pend:39,hold:30},
+  {d:'18/mai',novo:14,cipv:14,pend:58,hold:36},
+  {d:'19/mai',novo:9, cipv:9, pend:50,hold:34},
+  {d:'20/mai',novo:25,cipv:11,pend:50,hold:28},
+  {d:'21/mai',novo:11,cipv:11,pend:33,hold:22},
+  {d:'22/mai',novo:11,cipv:11,pend:27,hold:27},
+  {d:'23/mai',novo:33,cipv:6, pend:28,hold:26},
+  {d:'24/mai',novo:46,cipv:8, pend:28,hold:25}
+];
+// Individual data starts as stubs (user fills in)
+var COMBO_IND_DEFAULT = [
+  {d:'04/mai',tickets:0,tempo:0},{d:'05/mai',tickets:0,tempo:0},
+  {d:'06/mai',tickets:0,tempo:0},{d:'07/mai',tickets:0,tempo:0},
+  {d:'08/mai',tickets:0,tempo:0}
+];
+var BACKLOG_IND_DEFAULT = [
+  {d:'04/mai',novo:0,cipv:0,pend:0,hold:0},{d:'05/mai',novo:0,cipv:0,pend:0,hold:0},
+  {d:'06/mai',novo:0,cipv:0,pend:0,hold:0},{d:'07/mai',novo:0,cipv:0,pend:0,hold:0},
+  {d:'08/mai',novo:0,cipv:0,pend:0,hold:0}
+];
+
+var CHT_COMBO = {
+  resumo: JSON.parse(JSON.stringify(COMBO_DEFAULT)),
+  t: [
+    {d:'04/mai',tickets:13,tempo:47},
+    {d:'05/mai',tickets:27,tempo:17},
+    {d:'06/mai',tickets:21,tempo:5},
+    {d:'07/mai',tickets:19,tempo:4},
+    {d:'08/mai',tickets:16,tempo:12},
+    {d:'11/mai',tickets:18,tempo:6},
+    {d:'12/mai',tickets:25,tempo:14},
+    {d:'13/mai',tickets:23,tempo:6},
+    {d:'14/mai',tickets:21,tempo:6},
+    {d:'15/mai',tickets:15,tempo:4},
+    {d:'18/mai',tickets:22,tempo:8},
+    {d:'19/mai',tickets:19,tempo:15},
+    {d:'20/mai',tickets:11,tempo:5},
+    {d:'21/mai',tickets:16,tempo:3},
+    {d:'22/mai',tickets:13,tempo:2}
+  ],
+  i: [
+    {d:'04/mai',tickets:35,tempo:4},
+    {d:'05/mai',tickets:21,tempo:6},
+    {d:'06/mai',tickets:20,tempo:3},
+    {d:'07/mai',tickets:15,tempo:5},
+    {d:'08/mai',tickets:14,tempo:2},
+    {d:'11/mai',tickets:15,tempo:3},
+    {d:'12/mai',tickets:18,tempo:2},
+    {d:'13/mai',tickets:20,tempo:2},
+    {d:'14/mai',tickets:17,tempo:3},
+    {d:'15/mai',tickets:14,tempo:2},
+    {d:'18/mai',tickets:15,tempo:2},
+    {d:'19/mai',tickets:15,tempo:3},
+    {d:'20/mai',tickets:12,tempo:1},
+    {d:'21/mai',tickets:16,tempo:2},
+    {d:'22/mai',tickets:11,tempo:1}
+  ],
+  g: [
+    {d:'04/mai',tickets:34,tempo:22},
+    {d:'05/mai',tickets:23,tempo:16},
+    {d:'06/mai',tickets:19,tempo:5},
+    {d:'07/mai',tickets:17,tempo:8},
+    {d:'08/mai',tickets:14,tempo:7},
+    {d:'11/mai',tickets:15,tempo:6},
+    {d:'12/mai',tickets:18,tempo:11},
+    {d:'13/mai',tickets:20,tempo:7},
+    {d:'14/mai',tickets:19,tempo:8},
+    {d:'15/mai',tickets:13,tempo:4},
+    {d:'18/mai',tickets:18,tempo:7},
+    {d:'19/mai',tickets:15,tempo:12},
+    {d:'20/mai',tickets:14,tempo:4},
+    {d:'21/mai',tickets:15,tempo:4},
+    {d:'22/mai',tickets:17,tempo:5}
+  ]
+};
+var CHT_BACKLOG = {
+  resumo: JSON.parse(JSON.stringify(BACKLOG_DEFAULT)),
+  t: [
+    {d:'01/mai',novo:0,cipv:3, pend:12,hold:8},
+    {d:'02/mai',novo:0,cipv:3, pend:12,hold:8},
+    {d:'03/mai',novo:0,cipv:31,pend:12,hold:8},
+    {d:'04/mai',novo:0,cipv:6, pend:42,hold:10},
+    {d:'05/mai',novo:0,cipv:8, pend:26,hold:5},
+    {d:'06/mai',novo:0,cipv:4, pend:13,hold:6},
+    {d:'07/mai',novo:0,cipv:3, pend:9, hold:6},
+    {d:'08/mai',novo:0,cipv:1, pend:7, hold:4},
+    {d:'09/mai',novo:0,cipv:2, pend:7, hold:4},
+    {d:'10/mai',novo:0,cipv:24,pend:6, hold:4},
+    {d:'11/mai',novo:0,cipv:2, pend:20,hold:6},
+    {d:'12/mai',novo:0,cipv:5, pend:13,hold:5},
+    {d:'13/mai',novo:0,cipv:3, pend:29,hold:5},
+    {d:'14/mai',novo:0,cipv:2, pend:15,hold:6},
+    {d:'15/mai',novo:0,cipv:3, pend:12,hold:4},
+    {d:'16/mai',novo:0,cipv:5, pend:12,hold:4},
+    {d:'17/mai',novo:0,cipv:6, pend:11,hold:4},
+    {d:'18/mai',novo:0,cipv:4, pend:23,hold:6},
+    {d:'19/mai',novo:0,cipv:4, pend:12,hold:9},
+    {d:'20/mai',novo:0,cipv:4, pend:12,hold:6},
+    {d:'21/mai',novo:0,cipv:3, pend:14,hold:8},
+    {d:'22/mai',novo:0,cipv:2, pend:17,hold:6},
+    {d:'23/mai',novo:0,cipv:4, pend:17,hold:5},
+    {d:'24/mai',novo:0,cipv:21,pend:17,hold:5},
+    {d:'25/mai',novo:0,cipv:2, pend:22,hold:4},
+    {d:'26/mai',novo:0,cipv:1, pend:16,hold:4},
+    {d:'27/mai',novo:0,cipv:2, pend:14,hold:0},
+    {d:'28/mai',novo:0,cipv:6, pend:16,hold:1},
+    {d:'29/mai',novo:0,cipv:1, pend:14,hold:2},
+    {d:'30/mai',novo:0,cipv:3, pend:12,hold:2},
+    {d:'31/mai',novo:0,cipv:3, pend:12,hold:2}
+  ],
+  i: [
+    {d:'01/mai',novo:0,cipv:1, pend:9, hold:12},
+    {d:'02/mai',novo:0,cipv:2, pend:9, hold:11},
+    {d:'03/mai',novo:0,cipv:25,pend:9, hold:11},
+    {d:'04/mai',novo:0,cipv:6, pend:7, hold:11},
+    {d:'05/mai',novo:0,cipv:5, pend:13,hold:11},
+    {d:'06/mai',novo:0,cipv:3, pend:9, hold:10},
+    {d:'07/mai',novo:0,cipv:3, pend:11,hold:11},
+    {d:'08/mai',novo:0,cipv:0, pend:7, hold:12},
+    {d:'09/mai',novo:0,cipv:1, pend:7, hold:12},
+    {d:'10/mai',novo:0,cipv:22,pend:7, hold:12},
+    {d:'11/mai',novo:0,cipv:3, pend:15,hold:13},
+    {d:'12/mai',novo:0,cipv:4, pend:11,hold:12},
+    {d:'13/mai',novo:0,cipv:3, pend:10,hold:15},
+    {d:'14/mai',novo:0,cipv:2, pend:10,hold:13},
+    {d:'15/mai',novo:0,cipv:0, pend:7, hold:13},
+    {d:'16/mai',novo:0,cipv:3, pend:7, hold:13},
+    {d:'17/mai',novo:0,cipv:4, pend:7, hold:13},
+    {d:'18/mai',novo:0,cipv:4, pend:6, hold:15},
+    {d:'19/mai',novo:0,cipv:3, pend:10,hold:10},
+    {d:'20/mai',novo:0,cipv:2, pend:3, hold:10},
+    {d:'21/mai',novo:0,cipv:3, pend:4, hold:8},
+    {d:'22/mai',novo:0,cipv:0, pend:3, hold:7},
+    {d:'23/mai',novo:0,cipv:0, pend:3, hold:7},
+    {d:'24/mai',novo:0,cipv:17,pend:3, hold:7},
+    {d:'25/mai',novo:0,cipv:3, pend:20,hold:7},
+    {d:'26/mai',novo:0,cipv:3, pend:11,hold:7},
+    {d:'27/mai',novo:0,cipv:1, pend:25,hold:7},
+    {d:'28/mai',novo:0,cipv:5, pend:14,hold:9},
+    {d:'29/mai',novo:0,cipv:1, pend:5, hold:11},
+    {d:'30/mai',novo:0,cipv:1, pend:5, hold:11},
+    {d:'31/mai',novo:0,cipv:2, pend:5, hold:10}
+  ],
+  g: [
+    {d:'01/mai',novo:0,cipv:5, pend:22,hold:19},
+    {d:'02/mai',novo:0,cipv:5, pend:22,hold:19},
+    {d:'03/mai',novo:0,cipv:30,pend:22,hold:19},
+    {d:'04/mai',novo:0,cipv:13,pend:34,hold:32},
+    {d:'05/mai',novo:0,cipv:7, pend:19,hold:34},
+    {d:'06/mai',novo:0,cipv:6, pend:23,hold:24},
+    {d:'07/mai',novo:0,cipv:5, pend:24,hold:21},
+    {d:'08/mai',novo:0,cipv:5, pend:34,hold:20},
+    {d:'09/mai',novo:0,cipv:6, pend:34,hold:20},
+    {d:'10/mai',novo:0,cipv:26,pend:34,hold:20},
+    {d:'11/mai',novo:0,cipv:6, pend:38,hold:22},
+    {d:'12/mai',novo:0,cipv:7, pend:32,hold:19},
+    {d:'13/mai',novo:0,cipv:6, pend:26,hold:21},
+    {d:'14/mai',novo:0,cipv:7, pend:12,hold:15},
+    {d:'15/mai',novo:0,cipv:1, pend:21,hold:13},
+    {d:'16/mai',novo:0,cipv:2, pend:21,hold:13},
+    {d:'17/mai',novo:0,cipv:4, pend:21,hold:12},
+    {d:'18/mai',novo:0,cipv:6, pend:29,hold:14},
+    {d:'19/mai',novo:0,cipv:2, pend:28,hold:14},
+    {d:'20/mai',novo:0,cipv:5, pend:10,hold:11},
+    {d:'21/mai',novo:0,cipv:5, pend:15,hold:13},
+    {d:'22/mai',novo:0,cipv:1, pend:8, hold:13},
+    {d:'23/mai',novo:0,cipv:2, pend:8, hold:13},
+    {d:'24/mai',novo:0,cipv:20,pend:8, hold:11},
+    {d:'25/mai',novo:0,cipv:9, pend:22,hold:12},
+    {d:'26/mai',novo:0,cipv:5, pend:17,hold:16},
+    {d:'27/mai',novo:0,cipv:3, pend:13,hold:10},
+    {d:'28/mai',novo:0,cipv:6, pend:9, hold:8},
+    {d:'29/mai',novo:0,cipv:2, pend:13,hold:10},
+    {d:'30/mai',novo:0,cipv:6, pend:12,hold:8},
+    {d:'31/mai',novo:0,cipv:8, pend:11,hold:8}
+  ]
+};
+
+function renderComboSVG(key) {
+  var wrap = document.getElementById('combo-'+key+'-wrap');
+  if (!wrap) return;
+  var data = CHT_COMBO[key];
+  if (!data || !data.length) return;
+  var W = wrap.clientWidth || 900;
+  var H = 380;
+  var PAD = {top:24, right:64, bottom:40, left:52};
+  var iW = W - PAD.left - PAD.right;
+  var iH = H - PAD.top - PAD.bottom - 10;
+  var n = data.length;
+  var maxT = Math.max.apply(null, data.map(function(d){return d.tickets;})) || 10;
+  var maxM = Math.max.apply(null, data.map(function(d){return d.tempo;})) || 5;
+  var niceT = Math.ceil(maxT / 20) * 20;
+  var niceM = Math.ceil(maxM / 5) * 5;
+  var xStep = iW / n;
+  var barW = Math.max(xStep * 0.55, 8);
+  var cx = function(i){return PAD.left + xStep * i + xStep / 2;};
+  var yT = function(v){return PAD.top + iH - (v / niceT) * iH;};
+  var yM = function(v){return PAD.top + iH - (v / niceM) * iH;};
+  var gridLines = '', leftTicks = '', rightTicks = '';
+  for (var s=0; s<=4; s++) {
+    var vT = niceT/4*s; var yg = yT(vT);
+    gridLines += '<line x1="'+PAD.left+'" y1="'+yg+'" x2="'+(W-PAD.right)+'" y2="'+yg+'" stroke="#f0ece6" stroke-width="1"/>';
+    leftTicks += '<text x="'+(PAD.left-6)+'" y="'+(yg+4)+'" text-anchor="end" font-size="10" fill="#9e9894" font-family="DM Sans">'+Math.round(vT)+'</text>';
+    var vM = niceM/4*s; var ym2 = yM(vM);
+    rightTicks += '<text x="'+(W-PAD.right+8)+'" y="'+(ym2+4)+'" text-anchor="start" font-size="10" fill="#0ea5e9" font-family="DM Sans">'+Math.round(vM)+' min</text>';
+  }
+  var bars = '';
+  data.forEach(function(d, i) {
+    var bh = (d.tickets / niceT) * iH;
+    var x = cx(i) - barW/2;
+    var y = PAD.top + iH - bh;
+    bars += '<rect x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+barW.toFixed(1)+'" height="'+bh.toFixed(1)+'" rx="3" fill="rgba(203,213,225,0.8)"/>';
+    bars += '<text x="'+cx(i).toFixed(1)+'" y="'+(PAD.top+iH-8).toFixed(1)+'" text-anchor="middle" font-size="11" fill="#7a8fa6" font-family="DM Sans" font-weight="700">'+d.tickets+'</text>';
+  });
+  var pts = data.map(function(d,i){return {x:cx(i),y:yM(d.tempo)};});
+  var line = 'M '+pts[0].x.toFixed(1)+','+pts[0].y.toFixed(1);
+  for (var i2=1; i2<pts.length; i2++) {
+    var cpx = (pts[i2-1].x + pts[i2].x)/2;
+    line += ' C '+cpx.toFixed(1)+','+pts[i2-1].y.toFixed(1)+' '+cpx.toFixed(1)+','+pts[i2].y.toFixed(1)+' '+pts[i2].x.toFixed(1)+','+pts[i2].y.toFixed(1);
+  }
+  var dots = '', lbls = '';
+  pts.forEach(function(p, i) {
+    var lbl = data[i].tempo+' min';
+    var pw = lbl.length*5.6+8;
+    var lblY = Math.max(PAD.top+8, p.y-24);
+    lbls += '<rect x="'+(p.x-pw/2).toFixed(1)+'" y="'+(lblY-10).toFixed(1)+'" width="'+pw.toFixed(1)+'" height="14" rx="7" fill="#e0f2fe" opacity="0.9"/>';
+    lbls += '<text x="'+p.x.toFixed(1)+'" y="'+lblY.toFixed(1)+'" text-anchor="middle" font-size="10" fill="#0369a1" font-family="DM Sans" font-weight="700">'+lbl+'</text>';
+    dots += '<circle cx="'+p.x.toFixed(1)+'" cy="'+p.y.toFixed(1)+'" r="4" fill="#0ea5e9" stroke="#fff" stroke-width="2"/>';
+  });
+  var xLabels = '';
+  data.forEach(function(d,i){
+    xLabels += '<text x="'+cx(i).toFixed(1)+'" y="'+(H-6)+'" text-anchor="middle" font-size="10" fill="#9e9894" font-family="DM Sans">'+d.d+'</text>';
+  });
+  var axes = '<line x1="'+PAD.left+'" y1="'+PAD.top+'" x2="'+PAD.left+'" y2="'+(PAD.top+iH)+'" stroke="#e2ddd6" stroke-width="1"/><line x1="'+PAD.left+'" y1="'+(PAD.top+iH)+'" x2="'+(W-PAD.right)+'" y2="'+(PAD.top+iH)+'" stroke="#e2ddd6" stroke-width="1"/>';
+  wrap.innerHTML = '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:'+H+'px;display:block;overflow:visible">'+gridLines+axes+leftTicks+rightTicks+bars+'<path d="'+line+'" fill="none" stroke="#0ea5e9" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>'+lbls+dots+xLabels+'</svg>';
+}
+
+function renderComboTable(key) {
+  var tbody = document.getElementById('combo-'+key+'-tbody');
+  if (!tbody) return;
+  var data = CHT_COMBO[key];
+  tbody.innerHTML = data.map(function(d,i){
+    var ef='onChtFocus(this)'; var ek='onChtTab(event,this)';
+    return '<tr>'+
+      '<td><span class="cht-cell" contenteditable="true" onfocus="'+ef+'" onkeydown="'+ek+'" onblur="onComboEdit(\''+key+'\','+i+',\'d\',this)">'+d.d+'</span></td>'+
+      '<td><span class="cht-cell" style="color:#64748b" contenteditable="true" onfocus="'+ef+'" onkeydown="'+ek+'" onblur="onComboEdit(\''+key+'\','+i+',\'tickets\',this)">'+d.tickets+'</span></td>'+
+      '<td><span class="cht-cell" style="color:#0ea5e9" contenteditable="true" onfocus="'+ef+'" onkeydown="'+ek+'" onblur="onComboEdit(\''+key+'\','+i+',\'tempo\',this)">'+d.tempo+'</span></td>'+
+      '<td><button class="cht-del" onclick="delComboRow(\''+key+'\','+i+')" title="Remover">✕</button></td>'+
+      '</tr>';
+  }).join('');
+}
+
+function onComboEdit(key, i, field, el) {
+  if (field === 'd') { CHT_COMBO[key][i].d = el.textContent.trim(); }
+  else { var v = Math.max(0, parseInt(el.textContent.replace(/\D/g,''))||0); CHT_COMBO[key][i][field]=v; el.textContent=v; }
+  renderComboSVG(key);
+}
+function onChtFocus(el) {
+  // Select all on focus so typing replaces value immediately
+  setTimeout(function(){
+    if (document.activeElement !== el) return;
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    var sel = window.getSelection();
+    if (sel) { sel.removeAllRanges(); sel.addRange(range); }
+  }, 10);
+}
+function onChtTab(e, el) {
+  if (e.key !== 'Tab') return;
+  e.preventDefault();
+  e.stopPropagation();
+  // Trigger blur to save current value first
+  el.blur();
+  // Find all cht-cell in same table and move to next/prev
+  var table = el.closest('table');
+  if (!table) return;
+  var cells = Array.from(table.querySelectorAll('.cht-cell[contenteditable]'));
+  var idx = cells.indexOf(el);
+  var next = e.shiftKey ? cells[idx - 1] : cells[idx + 1];
+  if (next) { setTimeout(function(){ next.focus(); }, 0); }
+}
+function nextDateStr(lastD, isMonthly) {
+  if (!lastD || lastD === 'DD/mm') return isMonthly ? 'Jun' : 'DD/mm';
+  var MONTHS = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  if (isMonthly) {
+    var idx = MONTHS.indexOf(lastD);
+    if (idx >= 0) return MONTHS[(idx+1) % 12];
+    return lastD;
+  }
+  // Parse DD/mmm (e.g. "22/mai") or DD/mm (e.g. "22/05")
+  var parts = lastD.split('/');
+  if (parts.length !== 2) return lastD;
+  var day = parseInt(parts[0], 10);
+  var monPart = parts[1].trim();
+  var mon;
+  // Try named month first (mai, jan, fev, etc.)
+  var mIdx = MONTHS.findIndex(function(m){ return m.toLowerCase() === monPart.toLowerCase(); });
+  if (mIdx >= 0) {
+    mon = mIdx + 1;
+  } else {
+    mon = parseInt(monPart, 10);
+  }
+  if (isNaN(day) || isNaN(mon)) return lastD;
+  var year = new Date().getFullYear();
+  var d = new Date(year, mon-1, day);
+  // Advance to next weekday
+  do { d.setDate(d.getDate()+1); } while (d.getDay()===0 || d.getDay()===6);
+  var dd = String(d.getDate()).padStart(2,'0');
+  // Keep same month format as input (named or numeric)
+  var mmOut = mIdx >= 0 ? MONTHS[d.getMonth()].toLowerCase() : String(d.getMonth()+1).padStart(2,'0');
+  return dd+'/'+mmOut;
+}
+
+function addComboRow(key) {
+  var last = CHT_COMBO[key][CHT_COMBO[key].length-1];
+  var isMonthly = (key === 'resumo');
+  var nextD = last ? nextDateStr(last.d, isMonthly) : (isMonthly ? 'Jun' : 'DD/mm');
+  CHT_COMBO[key].push({d:nextD,tickets:0,tempo:0});
+  renderComboSVG(key);
+  var open = document.getElementById('combo-'+key+'-table-wrap');
+  if (open && open.classList.contains('open')) renderComboTable(key);
+}
+function delComboRow(key, i) {
+  if (CHT_COMBO[key].length<=1) return;
+  CHT_COMBO[key].splice(i,1);
+  renderComboSVG(key);
+  renderComboTable(key);
+}
+
+function renderBacklogSVG(key) {
+  var wrap = document.getElementById('backlog-'+key+'-chart');
+  if (!wrap) return;
+  var data = CHT_BACKLOG[key];
+  if (!data || !data.length) return;
+  var W = wrap.clientWidth || 920;
+  var H = parseInt(wrap.style.height)||420;
+  var PAD = {top:18, bottom:26};
+  var innerH = H - PAD.top - PAD.bottom;
+  var maxTotal = Math.max.apply(null, data.map(function(d){return d.novo+d.cipv+d.pend+d.hold;})) || 10;
+  var xStep = W / data.length;
+  var bw = Math.max(xStep * 0.72, 6);
+  var MIN_SEG = 24; // minimum px height for any non-zero segment
+  var BASE_Y = PAD.top + innerH; // fixed bottom baseline for all bars
+
+  var svg = '<svg viewBox="0 0 '+W+' '+H+'" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:'+H+'px;display:block">';
+
+  data.forEach(function(d, i) {
+    var cx2 = xStep * i + xStep / 2;
+    var x   = cx2 - bw / 2;
+    var total = d.novo + d.cipv + d.pend + d.hold;
+
+    if (total === 0) {
+      svg += '<text x="'+cx2.toFixed(1)+'" y="'+(H-5)+'" text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">'+d.d+'</text>';
+      return;
+    }
+
+    // proportional heights, then enforce minimum
+    var segs = [
+      {val:d.novo, fill:'#e8a951', h: Math.round((d.novo / maxTotal) * innerH)},
+      {val:d.cipv, fill:'#d97b72', h: Math.round((d.cipv / maxTotal) * innerH)},
+      {val:d.pend, fill:'#7aaac8', h: Math.round((d.pend / maxTotal) * innerH)},
+      {val:d.hold, fill:'#b0b0b0', h: Math.round((d.hold / maxTotal) * innerH)}
+    ];
+    segs.forEach(function(s){ if (s.val > 0 && s.h < MIN_SEG) s.h = MIN_SEG; });
+
+    // always stack from the fixed baseline upward
+    var curY = BASE_Y;
+    segs.forEach(function(seg) {
+      if (seg.val === 0) return;
+      curY -= seg.h;
+      svg += '<rect x="'+x.toFixed(1)+'" y="'+curY.toFixed(1)+'"'
+           + ' width="'+bw.toFixed(1)+'" height="'+seg.h+'"'
+           + ' fill="'+seg.fill+'" rx="1"/>';
+      var lblY = (curY + seg.h / 2 + 4).toFixed(1);
+      svg += '<text x="'+cx2.toFixed(1)+'" y="'+lblY+'"'
+           + ' text-anchor="middle" font-size="11"'
+           + ' fill="rgba(255,255,255,0.95)" font-family="DM Sans" font-weight="700">'
+           + seg.val+'</text>';
+    });
+
+    svg += '<text x="'+cx2.toFixed(1)+'" y="'+(H-5)+'"'
+         + ' text-anchor="middle" font-size="9" fill="#9e9894" font-family="DM Sans">'
+         + d.d+'</text>';
+  });
+
+  svg += '</svg>';
+  wrap.innerHTML = svg;
+}
+
+function renderBacklogTable(key) {
+  var tbody = document.getElementById('backlog-'+key+'-tbody');
+  if (!tbody) return;
+  var data = CHT_BACKLOG[key];
+  tbody.innerHTML = data.map(function(d,i){
+    var total = d.novo+d.cipv+d.pend+d.hold;
+    var ef='onChtFocus(this)'; var ek='onChtTab(event,this)';
+    return '<tr>'+
+      '<td><span class="cht-cell" contenteditable="true" onfocus="'+ef+'" onkeydown="'+ek+'" onblur="onBacklogEdit(\''+key+'\','+i+',\'d\',this)">'+d.d+'</span></td>'+
+      '<td><span class="cht-cell" style="color:#b8893a" contenteditable="true" onfocus="'+ef+'" onkeydown="'+ek+'" onblur="onBacklogEdit(\''+key+'\','+i+',\'novo\',this)">'+d.novo+'</span></td>'+
+      '<td><span class="cht-cell" style="color:#d97b72" contenteditable="true" onfocus="'+ef+'" onkeydown="'+ek+'" onblur="onBacklogEdit(\''+key+'\','+i+',\'cipv\',this)">'+d.cipv+'</span></td>'+
+      '<td><span class="cht-cell" style="color:#7aaac8" contenteditable="true" onfocus="'+ef+'" onkeydown="'+ek+'" onblur="onBacklogEdit(\''+key+'\','+i+',\'pend\',this)">'+d.pend+'</span></td>'+
+      '<td><span class="cht-cell" style="color:#777" contenteditable="true" onfocus="'+ef+'" onkeydown="'+ek+'" onblur="onBacklogEdit(\''+key+'\','+i+',\'hold\',this)">'+d.hold+'</span></td>'+
+      '<td style="font-weight:600;color:var(--text)">'+total+'</td>'+
+      '<td><button class="cht-del" onclick="delBacklogRow(\''+key+'\','+i+')" title="Remover">✕</button></td>'+
+      '</tr>';
+  }).join('');
+}
+
+function onBacklogEdit(key, i, field, el) {
+  if (field === 'd') { CHT_BACKLOG[key][i].d = el.textContent.trim(); }
+  else { var v = Math.max(0, parseInt(el.textContent.replace(/\D/g,''))||0); CHT_BACKLOG[key][i][field]=v; el.textContent=v; }
+  renderBacklogSVG(key);
+  renderBacklogTable(key);
+}
+function addBacklogRow(key) {
+  var last = CHT_BACKLOG[key][CHT_BACKLOG[key].length-1];
+  var nextD = last ? nextDateStr(last.d, false) : 'DD/mm';
+  CHT_BACKLOG[key].push({d:nextD,novo:0,cipv:0,pend:0,hold:0});
+  renderBacklogSVG(key);
+  var open = document.getElementById('backlog-'+key+'-table-wrap');
+  if (open && open.classList.contains('open')) renderBacklogTable(key);
+}
+function delBacklogRow(key, i) {
+  if (CHT_BACKLOG[key].length<=1) return;
+  CHT_BACKLOG[key].splice(i,1);
+  renderBacklogSVG(key);
+  renderBacklogTable(key);
+}
+
+function toggleLancar(key) {
+  var wrap = document.getElementById('lancar-'+key+'-wrap');
+  var icon = document.getElementById('lancar-'+key+'-icon');
+  if (!wrap) return;
+  var isOpen = wrap.classList.toggle('open');
+  if (icon) icon.textContent = isOpen ? '▲' : '▼';
+}
+
+function toggleChtTable(id) {
+  var wrap = document.getElementById(id+'-table-wrap');
+  var icon = document.getElementById(id+'-icon');
+  if (!wrap) return;
+  var isOpen = wrap.classList.toggle('open');
+  if (icon) icon.textContent = isOpen ? '▲' : '▼';
+  if (isOpen) {
+    if (id.indexOf('combo')===0) renderComboTable(id.replace('combo-',''));
+    else renderBacklogTable(id.replace('backlog-',''));
+  }
+}
+
+function renderAllCharts() {
+  ['resumo','t','i','g'].forEach(function(k) {
+    renderComboSVG(k);
+    renderBacklogSVG(k);
+  });
+}
+
+// ── DELEGATED HANDLERS FOR EDITABLE TABLE CELLS ──────────────────
+document.addEventListener('focus', function(e) {
+  var el = e.target;
+  if (!el.classList || !el.classList.contains('cht-cell')) return;
+  setTimeout(function(){
+    if (document.activeElement !== el) return;
+    var range = document.createRange();
+    range.selectNodeContents(el);
+    var sel = window.getSelection();
+    if (sel) { sel.removeAllRanges(); sel.addRange(range); }
+  }, 10);
+}, true);
+
+document.addEventListener('keydown', function(e) {
+  if (e.key !== 'Tab') return;
+  var el = e.target;
+  if (!el.classList || !el.classList.contains('cht-cell')) return;
+  e.preventDefault();
+  e.stopPropagation();
+  // Save index and table reference BEFORE blur (blur may re-render the table)
+  var table = el.closest('table');
+  if (!table) return;
+  var cells = Array.from(table.querySelectorAll('.cht-cell[contenteditable]'));
+  var idx = cells.indexOf(el);
+  var nextIdx = e.shiftKey ? idx - 1 : idx + 1;
+  el.blur();
+  // After blur (and possible re-render), re-query cells by index
+  setTimeout(function(){
+    var newCells = Array.from(table.querySelectorAll('.cht-cell[contenteditable]'));
+    var next = newCells[nextIdx];
+    if (next) next.focus();
+  }, 30);
+}, true);
+
+window.addEventListener('resize', function(){
+  var active = document.querySelector('.panel.active');
+  if (!active) return;
+  ['resumo','t','i','g'].forEach(function(k){
+    renderComboSVG(k); renderBacklogSVG(k);
+  });
+});
+
+// ── INIT ──────────────────────────────────────────────
+function init(){
+  restoreData();
+  if(window.__snap)applyData(window.__snap);
+  // Sem login nesta versão standalone
+  // Render combo/backlog charts after layout settles
+  setTimeout(renderAllCharts, 300);
+}
+window.addEventListener('DOMContentLoaded',init);
+</script>
+
+
+<script>
+// Inicialização: mostrar tab-resumo sem login
+document.addEventListener('DOMContentLoaded', function() {
+  var loginEl = document.getElementById('cx-login');
+  if (loginEl) loginEl.style.display = 'none';
+  ['tab-tayna','tab-isabela','tab-gabriel','tab-lancar','tab-metas'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el) { el.style.display = 'none'; el.classList.remove('active'); }
+  });
+  var tabResumo = document.getElementById('tab-resumo');
+  if (tabResumo) { tabResumo.style.display = 'block'; tabResumo.classList.add('active'); }
+  setTimeout(function(){
+    if (typeof renderResumo === 'function') renderResumo();
+    if (typeof renderAllCharts === 'function') renderAllCharts();
+  }, 450);
+});
+</script>
+</body>
+</html>
